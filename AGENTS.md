@@ -639,3 +639,61 @@ Do not merely report that SQ-0104 has started.
 Work SQ-0104 through its completion gate, deliver it, then continue to the next approved backlog task in the SAME available turn.
 
 Continue until the SideQuest MVP is complete, a genuine external blocker occurs, or the Codex runtime itself forcibly terminates the turn.
+
+## Autonomous Continuation — Highest Priority
+
+SideQuest is under an autonomous MVP implementation mandate.
+
+Never classify a repository-owned problem as `SIDEQUEST DEVELOPMENT BLOCKED`.
+
+If a problem can be solved by changing code, tests, migrations, fixtures, configuration, documentation, localization, UI, architecture, or other repository content, FIX IT YOURSELF.
+
+Simple rule:
+
+**If you can describe an actionable repository change that would resolve the problem, it is not a blocker. Perform that change.**
+
+Examples that are NOT blockers:
+
+* incomplete implementation
+* failed acceptance criteria
+* QA findings
+* architecture findings
+* security findings fixable in code
+* failing tests
+* lint/type errors
+* missing localization
+* hardcoded labels
+* missing UI states
+* incorrect navigation
+* stale fixtures
+* SQL errors
+* migration bugs
+* regressions
+
+For these:
+
+FIX → TEST → REVIEW → FIX AGAIN IF NEEDED → COMPLETE TASK.
+
+A TRUE blocker requires something unavailable outside the repository, such as a required credential, mandatory operator-only action, inaccessible external account, genuinely unresolved product decision, or release/legal owner approval.
+
+After completing a task:
+
+COMMIT → PUSH → VERIFY → READ NEXT BACKLOG TASK → IMPLEMENT NEXT TASK.
+
+Do not stop merely because a task or epic completed.
+
+Do not stop merely because the next task was started.
+
+Do not commit a task as complete before its completion gate passes.
+
+If a partial task commit has already been pushed, preserve history and finish it with a follow-up commit.
+
+If the Codex runtime itself ends before the MVP is complete, preserve all valid work so the next invocation can resume deterministically from repository state.
+
+The only intentional project-level terminal responses are:
+
+`SIDEQUEST MVP DEVELOPMENT COMPLETE`
+
+or, for a genuine external dependency only:
+
+`SIDEQUEST DEVELOPMENT BLOCKED`
