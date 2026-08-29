@@ -50,7 +50,7 @@ test('SQ-0402 renders the no-Active recovery state', async () => {
 
 test('SQ-0403 opens maps only for a valid snapshotted place', async () => {
   const openMap = jest.fn(async () => true);
-  const placeQuest = { ...quest, location: { name: 'Museum', latitude: -6.2, longitude: 106.8, address: 'Public square' } };
+  const placeQuest = { ...quest, locationMode: 'place' as const, location: { name: 'Museum', latitude: -6.2, longitude: 106.8, address: 'Public square' } };
   const view = await render(<ActiveQuestUi state={{ kind: 'active', quest: placeQuest }} onOpenMap={openMap} />, { wrapper });
   await act(async () => { fireEvent.press(view.getByRole('button', { name: 'Open Maps' })); });
   expect(openMap).toHaveBeenCalledWith('https://www.google.com/maps/search/?api=1&query=-6.2%2C106.8%20(Museum)');
@@ -58,7 +58,7 @@ test('SQ-0403 opens maps only for a valid snapshotted place', async () => {
 });
 
 test('SQ-0403 shows fallback copy when no supported map app opens', async () => {
-  const placeQuest = { ...quest, location: { name: 'Museum', externalMapUrl: 'https://maps.apple.com/?q=Museum' } };
+  const placeQuest = { ...quest, locationMode: 'place' as const, location: { name: 'Museum', externalMapUrl: 'https://maps.apple.com/?q=Museum' } };
   const view = await render(<ActiveQuestUi state={{ kind: 'active', quest: placeQuest }} onOpenMap={async () => false} />, { wrapper });
   await act(async () => { fireEvent.press(view.getByRole('button', { name: 'Open Maps' })); });
   expect(await view.findByText('No supported map app is available. Use the address and instructions instead.')).toBeTruthy();
