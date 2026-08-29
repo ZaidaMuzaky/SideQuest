@@ -10,19 +10,17 @@ insert into auth.users (
   raw_app_meta_data, raw_user_meta_data, created_at, updated_at
 ) values
   ('00000000-0000-4000-8000-000000000011', '00000000-0000-0000-0000-000000000000',
-   'authenticated', 'authenticated', 'rls-one@example.test', '', '{}'::jsonb, '{}'::jsonb, now(), now()),
+   'authenticated', 'authenticated', 'rls-one@example.test', '', '{}'::jsonb, '{"display_name":"RLS User One"}'::jsonb, now(), now()),
   ('00000000-0000-4000-8000-000000000012', '00000000-0000-0000-0000-000000000000',
-   'authenticated', 'authenticated', 'rls-two@example.test', '', '{}'::jsonb, '{}'::jsonb, now(), now());
+   'authenticated', 'authenticated', 'rls-two@example.test', '', '{}'::jsonb, '{"display_name":"RLS User Two"}'::jsonb, now(), now());
 
-insert into public.profiles (user_id, display_name) values
-  ('00000000-0000-4000-8000-000000000011', 'RLS User One'),
-  ('00000000-0000-4000-8000-000000000012', 'RLS User Two');
+update public.user_preferences set
+  default_time = '1_hour', default_budget = 'free', default_mood = 'random', default_distance = 'walking'
+where user_id = '00000000-0000-4000-8000-000000000011';
+update public.user_preferences set
+  default_time = '1_hour', default_budget = 'free', default_mood = 'chill', default_distance = 'walking'
+where user_id = '00000000-0000-4000-8000-000000000012';
 
-insert into public.user_preferences (
-  user_id, default_time, default_budget, default_mood, default_distance
-) values
-  ('00000000-0000-4000-8000-000000000011', '1_hour', 'free', 'random', 'walking'),
-  ('00000000-0000-4000-8000-000000000012', '1_hour', 'free', 'chill', 'walking');
 
 insert into public.categories (id, slug, name_key, is_enabled) values
   (11, 'chill', 'category.chill', true),
@@ -116,9 +114,8 @@ insert into public.quest_completions (
    '00000000-0000-4000-8000-000000000012', '40000000-0000-4000-8000-000000000022',
    50, 1, 1, '60000000-0000-4000-8000-000000000022');
 
-insert into public.user_progress (user_id, lifetime_xp, level, completed_count) values
-  ('00000000-0000-4000-8000-000000000011', 50, 1, 1),
-  ('00000000-0000-4000-8000-000000000012', 50, 1, 1);
+update public.user_progress set lifetime_xp = 50, level = 1, completed_count = 1
+where user_id in ('00000000-0000-4000-8000-000000000011', '00000000-0000-4000-8000-000000000012');
 
 insert into public.xp_ledger (id, user_id, quest_completion_id, amount, reason) values
   ('70000000-0000-4000-8000-000000000021', '00000000-0000-4000-8000-000000000011',

@@ -28,10 +28,10 @@ One-to-one public identity/private ownership root.
 | Field | Type | Rules |
 |---|---|---|
 | user_id | uuid | PK/FK profiles ON DELETE CASCADE |
-| default_time | text | NOT NULL, enum/check |
-| default_budget | text | NOT NULL, enum/check |
-| default_mood | text | NOT NULL; includes `random` selector |
-| default_distance | text | NOT NULL, enum/check |
+| default_time | text | NOT NULL, enum/check; new-account bootstrap defaults to `flexible` |
+| default_budget | text | NOT NULL, enum/check; new-account bootstrap defaults to `flexible` |
+| default_mood | text | NOT NULL; includes `random` selector, used by bootstrap as a neutral default |
+| default_distance | text | NOT NULL, enum/check; new-account bootstrap defaults to `flexible` |
 | theme | text | NOT NULL default `system`, check system/light/dark |
 | created_at / updated_at | timestamptz | NOT NULL |
 

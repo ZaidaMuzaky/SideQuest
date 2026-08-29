@@ -14,13 +14,9 @@ insert into auth.users (
   raw_app_meta_data, raw_user_meta_data, created_at, updated_at
 ) values
   ('00000000-0000-4000-8000-000000000001', '00000000-0000-0000-0000-000000000000',
-   'authenticated', 'authenticated', 'one@example.test', '', '{}'::jsonb, '{}'::jsonb, now(), now()),
+   'authenticated', 'authenticated', 'one@example.test', '', '{}'::jsonb, '{"display_name":"User One"}'::jsonb, now(), now()),
   ('00000000-0000-4000-8000-000000000002', '00000000-0000-0000-0000-000000000000',
-   'authenticated', 'authenticated', 'two@example.test', '', '{}'::jsonb, '{}'::jsonb, now(), now());
-
-insert into public.profiles (user_id, display_name) values
-  ('00000000-0000-4000-8000-000000000001', 'User One'),
-  ('00000000-0000-4000-8000-000000000002', 'User Two');
+   'authenticated', 'authenticated', 'two@example.test', '', '{}'::jsonb, '{"display_name":"User Two"}'::jsonb, now(), now());
 
 insert into public.categories (id, slug, name_key)
 values (1, 'chill', 'category.chill');
@@ -152,8 +148,9 @@ values (
   '50000000-0000-4000-8000-000000000001', 50, 'quest_completion'
 );
 
-insert into public.user_progress (user_id, lifetime_xp, level, completed_count)
-values ('00000000-0000-4000-8000-000000000001', 50, 1, 1);
+update public.user_progress
+set lifetime_xp = 50, level = 1, completed_count = 1
+where user_id = '00000000-0000-4000-8000-000000000001';
 
 select throws_ok(
   $$insert into public.quest_completions

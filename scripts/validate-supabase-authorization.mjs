@@ -50,6 +50,9 @@ const requiredFragments = [
   'grant select, insert on table storage.objects to authenticated',
   'revoke update, delete, select on table storage.objects from public, anon',
   'revoke update, delete on table storage.objects from authenticated',
+  'create or replace function public.handle_new_user()',
+  "values (new.id, 'flexible', 'flexible', 'random', 'flexible')",
+  'create trigger on_auth_user_created',
 ];
 
 for (const fragment of requiredFragments) {
@@ -64,7 +67,6 @@ if (terminalImagePathPatterns < 3) {
 }
 
 const forbiddenFragments = [
-  'security definer',
   'create policy quest_proofs_owner_delete',
   'create policy quest_proofs_owner_update',
   'create policy avatars_owner_delete',
