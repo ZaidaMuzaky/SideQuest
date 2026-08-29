@@ -15,6 +15,7 @@ test('SQ-0204 restores the authoritative Active Quest snapshot', async () => {
       id: 'active-1',
       category_id: 3,
       snapshot: { title: 'Sketch the skyline', instructions: ['Bring a pencil'] },
+      quest_proofs: [{ status: 'uploaded' }],
     },
     error: null,
   });
@@ -24,9 +25,10 @@ test('SQ-0204 restores the authoritative Active Quest snapshot', async () => {
     category: '3',
     title: 'Sketch the skyline',
     snapshot: { title: 'Sketch the skyline', instructions: ['Bring a pencil'] },
+    proofStatus: 'uploaded',
   });
   expect(query.from).toHaveBeenCalledWith('quest_instances');
-  expect(query.select).toHaveBeenCalledWith('id, snapshot, category_id');
+  expect(query.select).toHaveBeenCalledWith('id, snapshot, category_id, quest_proofs(status)');
   expect(query.userEq).toHaveBeenCalledWith('user_id', 'user-1');
   expect(query.statusEq).toHaveBeenCalledWith('status', 'active');
 });

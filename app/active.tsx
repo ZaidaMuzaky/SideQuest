@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { SafeAreaView, View } from 'react-native';
+import { SafeAreaView, ScrollView } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
-import { AppText, Button } from '@/components/ui';
+import { Button } from '@/components/ui';
 import { developmentCopy } from '@/constants/development-copy';
-import { getActiveQuest, type ActiveQuestSummary } from '@/features/active';
+import { ActiveQuestUi, getActiveQuest, toActiveQuestDetail, type ActiveQuestDetail } from '@/features/active';
 import { useSession } from '@/features/auth';
 import { getSupabaseClient } from '@/lib/supabase';
 
@@ -12,9 +12,11 @@ export default function ActiveResumeRoute() {
   const { session } = useSession();
   const { id } = useLocalSearchParams<{ id?: string }>();
   const router = useRouter();
-  const [quest, setQuest] = useState<ActiveQuestSummary | null>(null);
+  const [quest, setQuest] = useState<ActiveQuestDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [offline, setOffline] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
     if (!session) {
@@ -29,26 +31,41 @@ export default function ActiveResumeRoute() {
     void getActiveQuest(getSupabaseClient(), session.user.id)
       .then((active) => {
         if (!mounted) return;
-        if (!active || active.id !== id) setError(developmentCopy.active.unavailable);
-        else setQuest(active);
+        if (!active) setError(developmentCopy.active.unavailable);
+        else {
+          setQuest(toActiveQuestDetail(active));
+          setOffline(false);
+        }
       })
       .catch(() => {
-        if (mounted) setError(developmentCopy.active.restoreError);
+        if (!mounted) return;
+        setQuest((current) => {
+          if (current) setOffline(true);
+          else setError(developmentCopy.active.restoreError);
+          return current;
+        });
       })
       .finally(() => {
         if (mounted) setLoading(false);
       });
     return () => { mounted = false; };
-  }, [id, session]);
+  }, [id, retryKey, session]);
+
+  const state = loading && !quest ? { kind: 'loading' as const }
+    : quest ? { kind: 'active' as const, quest, offline }
+      : error ? { kind: 'error' as const, retry: () => {
+        setLoading(true);
+        setError(null);
+        setRetryKey((value) => value + 1);
+      } }
+        : { kind: 'empty' as const };
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <View style={{ flex: 1, gap: 20, padding: 24 }}>
-        {loading ? <AppText>{developmentCopy.loading}</AppText> : null}
-        {quest ? <AppText accessibilityRole="header" variant="heading">{quest.title || developmentCopy.active.untitled}</AppText> : null}
-        {error ? <AppText accessibilityLiveRegion="polite" tone="danger">{error}</AppText> : null}
+      <ScrollView contentContainerStyle={{ gap: 20, padding: 24 }}>
+        <ActiveQuestUi state={state} />
         <Button variant="secondary" onPress={() => router.replace('/')}>{developmentCopy.active.backToExplore}</Button>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
