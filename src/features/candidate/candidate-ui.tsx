@@ -10,9 +10,10 @@ type CandidateUiProps = {
   onAccept?: () => void;
   onAdjustFilters?: () => void;
   onReroll?: () => void;
+  onFindAnother?: () => void;
 };
 
-export function CandidateUi({ state, onAccept, onAdjustFilters, onReroll }: CandidateUiProps) {
+export function CandidateUi({ state, onAccept, onAdjustFilters, onReroll, onFindAnother }: CandidateUiProps) {
   if (state.kind === 'loading') return <LoadingState message={developmentCopy.candidate.loading} />;
   if (state.kind === 'error') {
     return <ErrorState title={developmentCopy.candidate.errorTitle} description={developmentCopy.candidate.errorDescription} onRetry={state.retry} retryLabel={developmentCopy.candidate.retry} />;
@@ -22,6 +23,9 @@ export function CandidateUi({ state, onAccept, onAdjustFilters, onReroll }: Cand
   }
   if (state.kind === 'exhausted') {
     return <EmptyState title={developmentCopy.candidate.exhaustedTitle} description={developmentCopy.candidate.exhaustedDescription} />;
+  }
+  if (state.kind === 'expired') {
+    return <View accessibilityLiveRegion="polite"><EmptyState title={developmentCopy.candidate.expiredTitle} description={developmentCopy.candidate.expiredDescription} /><Button onPress={onFindAnother}>{developmentCopy.candidate.findAnother}</Button></View>;
   }
   const { candidate } = state;
   return (

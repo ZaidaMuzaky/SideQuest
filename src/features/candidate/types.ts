@@ -3,6 +3,7 @@ export type CandidateUiState =
   | { kind: 'candidate'; candidate: Candidate }
   | { kind: 'no-match' }
   | { kind: 'exhausted' }
+  | { kind: 'expired' }
   | { kind: 'error'; retry: () => void };
 
 export type Candidate = {
