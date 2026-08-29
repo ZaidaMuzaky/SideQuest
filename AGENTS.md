@@ -377,3 +377,265 @@ For every authorized SQ-* task:
 14. Only after successful completion and delivery may the orchestrator proceed to the next authorized SQ-* task.
 
 Do not start SQ-0006 while applying this workflow change.
+
+# CONTINUOUS AUTONOMOUS EXECUTION POLICY
+
+This repository is being developed under a continuous autonomous MVP mandate.
+
+The current completed baseline includes:
+
+* SQ-0102 COMPLETE at `665e42ce10074ef63dce58b4f577d9d1a45c928b`
+* SQ-0103 COMPLETE and pushed to `origin/main`
+* SQ-0104 is the current active backlog task
+
+The authoritative backlog remains:
+
+`docs/22-development-backlog.md`
+
+## CRITICAL: DO NOT END A TURN AFTER STARTING THE NEXT TASK
+
+Starting, initiating, assigning, delegating, or planning the next SQ task is NOT a stopping condition.
+
+The following response pattern is explicitly forbidden:
+
+> SQ-XXXX is complete and pushed.
+> SQ-YYYY has been initiated.
+> SQ-YYYY is not complete in this run.
+
+Do not voluntarily end execution in that state.
+
+If SQ-YYYY has been initiated, continue working on SQ-YYYY immediately.
+
+If SQ-YYYY completes, deliver it and immediately begin and continue the next approved SQ task.
+
+Repeat.
+
+## TURN CONTINUATION RULE
+
+Within every available Codex turn, consume the available execution opportunity by continuing useful repository work.
+
+Do not voluntarily return a progress summary while:
+
+* an approved backlog task remains incomplete;
+* no genuine blocker exists; and
+* tools/runtime remain available.
+
+A completed SQ task is only a checkpoint, not a reason to respond to the user.
+
+After every task completion:
+
+1. commit;
+2. push;
+3. verify;
+4. read the next incomplete backlog item;
+5. start it;
+6. CONTINUE IMPLEMENTING IT IN THE SAME TURN.
+
+Do not stop after step 5.
+
+## NO PROGRESS-ONLY FINAL RESPONSES
+
+Do not return a final response merely to say:
+
+* task completed;
+* next task started;
+* implementation initiated;
+* agent delegated;
+* worktree clean;
+* next task identified;
+* continuing next run.
+
+Those are internal checkpoints.
+
+Continue execution instead.
+
+## SELF-COMMAND POLICY
+
+Do not wait for another user message to generate the next instruction.
+
+After finishing any action, issue the next appropriate instruction to yourself.
+
+Use this autonomous control loop:
+
+while approved MVP work remains:
+
+```
+inspect current task
+implement remaining scope
+run narrow tests
+diagnose failures
+fix failures
+run regression gates
+perform architecture review
+perform QA review
+perform security review
+verify acceptance criteria
+
+if task passes:
+    review diff
+    check secrets
+    commit task
+    push task
+    verify origin/main
+    mark task complete
+    select next incomplete task
+    continue immediately
+
+else if failure is repository-owned:
+    fix it
+    continue
+
+else if true external blocker:
+    stop
+```
+
+Do not ask the user to trigger the next iteration.
+
+## FIXABLE FAILURES NEVER STOP EXECUTION
+
+Repository-owned failures include:
+
+* implementation bugs
+* TypeScript errors
+* lint errors
+* Jest failures
+* pgTAP failures
+* stale fixtures
+* migrations needing correction
+* RLS problems
+* QA findings
+* security findings
+* navigation issues
+* UI issues
+* schema mismatches
+* regression failures
+* incorrect assumptions discoverable from repository documentation
+
+For these:
+
+DIAGNOSE → FIX → TEST → CONTINUE.
+
+Do not return control to the user.
+
+## SUBAGENT POLICY
+
+Subagents are workers, not stopping boundaries.
+
+If a delegated implementation/review agent finishes:
+
+* inspect its result;
+* integrate or correct it;
+* run required gates;
+* continue the parent workflow.
+
+Do not end the parent turn merely because a subagent completed.
+
+If a subagent returns a fixable failure, the parent must repair or redelegate it automatically.
+
+## TRUE BLOCKERS ONLY
+
+A turn may intentionally stop only for a genuine external blocker such as:
+
+* privileged credential unavailable to Codex;
+* mandatory operator-only remote action;
+* Git authentication unavailable;
+* inaccessible external account/service;
+* unresolved authoritative product decision that truly blocks implementation;
+* legal/privacy owner approval;
+* destructive production action;
+* App Store / Play Store owner action;
+* paid external purchase;
+* contradictory authoritative requirements that cannot be resolved from repository evidence.
+
+Ordinary repository engineering work is not a blocker.
+
+## SUPABASE OPERATOR ACTIONS
+
+If remote Supabase credentials are unavailable:
+
+1. finish ALL repository-side implementation first;
+2. finish ALL local tests/reviews first;
+3. batch remote verification at the final task gate where safe;
+4. request only the minimum operator command.
+
+Do not stop earlier just because a future remote check will eventually be needed.
+
+If no new migration exists, do not request a migration push.
+
+## TASK DELIVERY
+
+Each backlog task remains its own delivery unit.
+
+For every SQ task:
+
+READ
+→ IMPLEMENT
+→ REVIEW
+→ TEST
+→ FIX
+→ RETEST
+→ AC GATE
+→ DIFF REVIEW
+→ SECRET REVIEW
+→ COMMIT
+→ PUSH
+→ VERIFY
+→ NEXT TASK
+
+Commit subjects begin with the relevant SQ ID.
+
+Do not amend delivered historical tasks.
+Do not force push.
+Do not rewrite history.
+
+## RESPONSE POLICY
+
+There are only two valid intentional final states.
+
+### 1. Entire approved MVP is complete
+
+Return:
+
+`SIDEQUEST MVP DEVELOPMENT COMPLETE`
+
+with the final delivery summary.
+
+### 2. Genuine external blocker
+
+Return:
+
+`SIDEQUEST DEVELOPMENT BLOCKED`
+
+with the minimum required operator/user action.
+
+Anything else should normally remain an internal checkpoint and execution should continue.
+
+## RUNTIME/SYSTEM INTERRUPTION RECOVERY
+
+If the Codex product itself ends a turn because of runtime, context, usage, or another platform boundary before the MVP is complete, that interruption does NOT change the project mandate.
+
+On the next available turn:
+
+1. inspect `git status`;
+2. inspect HEAD and `origin/main`;
+3. read the latest completed SQ from repository/backlog evidence;
+4. inspect partial work for the active SQ;
+5. preserve valid partial work;
+6. resume immediately;
+7. continue the autonomous loop.
+
+Do not ask the user what to do next.
+
+Do not restart completed tasks.
+
+## CURRENT ACTION
+
+SQ-0103 has already been delivered.
+
+Resume the existing SQ-0104 implementation now.
+
+Do not merely report that SQ-0104 has started.
+
+Work SQ-0104 through its completion gate, deliver it, then continue to the next approved backlog task in the SAME available turn.
+
+Continue until the SideQuest MVP is complete, a genuine external blocker occurs, or the Codex runtime itself forcibly terminates the turn.

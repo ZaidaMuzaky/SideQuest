@@ -13,4 +13,6 @@ export const developmentCopy = {
   password: 'Password',
   signIn: 'Sign in',
   signOut: 'Sign out',
+  onboardingTitle: 'Make SideQuest fit your day', onboardingIntro: 'Choose defaults for your first quests. You can change them later.',
+  ageNotice: 'SideQuest is for people aged 18 and over.', saveAndExplore: 'Save and Explore', back: 'Back', retrySave: 'Retry save',
 } as const;

@@ -51,9 +51,26 @@ export function SessionGate({ children }: PropsWithChildren) {
   const pathname = usePathname();
   const router = useRouter();
   const decision = routeDecision(pathname, { session: state.session, isLoading: state.isLoading, error: state.error });
+  const [onboardingChecked, setOnboardingChecked] = useState(false);
+  const onboardingRoute = pathname === '/auth' || pathname === '/signup' || pathname === '/onboarding';
+  useEffect(() => {
+    let active = true;
+    if (!state.session || state.isLoading || state.error || onboardingRoute) {
+      return () => { active = false; };
+    }
+    queueMicrotask(() => { if (active) setOnboardingChecked(false); });
+    void getSupabaseClient().from('profiles').select('onboarding_completed_at').eq('user_id', state.session.user.id).maybeSingle()
+      .then(({ data, error }) => {
+        if (!active) return;
+        setOnboardingChecked(true);
+        if (!error && !data?.onboarding_completed_at && pathname !== '/onboarding') router.replace('/onboarding' as never);
+      });
+    return () => { active = false; };
+  }, [onboardingRoute, pathname, router, state.error, state.isLoading, state.session]);
   useEffect(() => {
     if (decision === 'auth' && pathname.startsWith('/protected')) router.replace('/auth' as never);
   }, [decision, pathname, router]);
-  if (decision === 'loading' || (decision === 'auth' && pathname.startsWith('/protected'))) return <AppLoadingFallback />;
+  const onboardingPending = Boolean(state.session && !state.isLoading && !state.error && !onboardingRoute && !onboardingChecked);
+  if (decision === 'loading' || onboardingPending || (decision === 'auth' && pathname.startsWith('/protected'))) return <AppLoadingFallback />;
   return <>{children}</>;
 }
