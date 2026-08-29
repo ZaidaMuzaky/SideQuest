@@ -13,7 +13,7 @@ export default function FoundationScreen() {
   const [error, setError] = useState<string | null>(null);
   const handleSignOut = async () => {
     setError(null);
-    try { await signOut(getSupabaseClient()); router.replace('/auth'); }
+    try { await signOut(getSupabaseClient()); router.replace('/auth' as never); }
     catch (cause: unknown) { setError(safeAuthMessage(cause)); }
   };
   return (
