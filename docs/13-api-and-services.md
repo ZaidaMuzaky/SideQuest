@@ -20,7 +20,7 @@ Input: search UUID, time/budget/mood/distance enum, optional coordinate/already-
 
 ### `reroll_quest`
 
-Input: candidate ID, search UUID. Output: next Candidate or exhausted reason. Atomically marks the prior Candidate rerolled and excludes every `template_id` already represented by an Instance with the same `search_id`; the server owns limits and no exclusion table is used.
+Input: candidate ID, search UUID, client-generated request UUID, and optional fresh foreground coordinates/timezone for place eligibility. Coordinates are transient inputs and are never persisted. Output: next Candidate or a typed exhausted, expired, or rate-limited outcome with retry guidance where applicable. Atomically marks the prior Candidate rerolled and excludes every `template_id` already represented by an Instance with the same `search_id`; the server owns limits and no exclusion table is used.
 
 ### `accept_quest`
 

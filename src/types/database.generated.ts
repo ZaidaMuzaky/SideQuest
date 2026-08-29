@@ -284,6 +284,55 @@ export type Database = {
           },
         ]
       }
+      quest_reroll_requests: {
+        Row: {
+          candidate_id: string
+          created_at: string
+          request_id: string
+          result: Json
+          search_id: string
+          user_id: string
+        }
+        Insert: {
+          candidate_id: string
+          created_at?: string
+          request_id: string
+          result: Json
+          search_id: string
+          user_id: string
+        }
+        Update: {
+          candidate_id?: string
+          created_at?: string
+          request_id?: string
+          result?: Json
+          search_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quest_reroll_requests_candidate_owner_fk"
+            columns: ["candidate_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "quest_instances"
+            referencedColumns: ["id", "user_id"]
+          },
+          {
+            foreignKeyName: "quest_reroll_requests_search_owner_fk"
+            columns: ["search_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "quest_searches"
+            referencedColumns: ["id", "user_id"]
+          },
+          {
+            foreignKeyName: "quest_reroll_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       quest_proofs: {
         Row: {
           byte_size: number
@@ -660,6 +709,17 @@ export type Database = {
           p_mood_filter: string
           p_search_id: string
           p_time_filter: string
+          p_timezone?: string
+        }
+        Returns: Json
+      }
+      reroll_quest: {
+        Args: {
+          p_candidate_id: string
+          p_latitude?: number | null
+          p_longitude?: number | null
+          p_request_id: string
+          p_search_id: string
           p_timezone?: string
         }
         Returns: Json

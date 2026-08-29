@@ -126,6 +126,10 @@ WHERE status = 'active';
 
 Other indexes: `(user_id, created_at desc)`, `(search_id, status)`, `(template_id, user_id, created_at desc)`.
 
+### `quest_reroll_requests`
+
+Private server-owned operation ledger required by `SQ-0303` for reroll idempotency and the combined rolling search/reroll rate limit. It stores a client-generated request UUID, owner, search, Candidate, typed result JSON, and server timestamp. Clients receive results only through `reroll_quest`; direct reads and writes are denied. Rows are immutable, cascade with their owner/search/Candidate, and are not a separate template-exclusion source—session exclusions continue to derive only from `quest_instances`.
+
 ### `quest_proofs`
 
 `id uuid` PK; `quest_instance_id uuid` FK UNIQUE (at most one current proof); `user_id uuid` FK; `storage_path text` UNIQUE NOT NULL; `mime_type text`; `byte_size integer`; `note text` nullable check ≤500; `status text` check uploaded/pending_delete; `created_at/updated_at`. A proof may exist while its Quest is Active. Validate `user_id` equals instance owner in a privileged function/trigger. Replacing/abandoning marks metadata `pending_delete`; an explicit worker deletes the Storage object first and then may delete metadata. Database deletion alone never implies Storage deletion. Index user/time.
