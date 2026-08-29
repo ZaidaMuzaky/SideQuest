@@ -699,6 +699,7 @@ export type Database = {
       }
     }
     Functions: {
+      abandon_quest: { Args: { p_quest_instance_id: string }; Returns: Json }
       accept_quest: { Args: { p_candidate_id: string }; Returns: Json }
       quest_server_time: { Args: never; Returns: string }
       match_quest: {

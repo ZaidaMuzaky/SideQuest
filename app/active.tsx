@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { Button } from '@/components/ui';
 import { developmentCopy } from '@/constants/development-copy';
-import { ActiveQuestUi, getActiveQuest, toActiveQuestDetail, type ActiveQuestDetail } from '@/features/active';
+import { abandonQuest, AbandonConfirmation, ActiveQuestUi, getActiveQuest, toActiveQuestDetail, type ActiveQuestDetail } from '@/features/active';
 import { useSession } from '@/features/auth';
 import { getSupabaseClient } from '@/lib/supabase';
 
@@ -17,6 +17,9 @@ export default function ActiveResumeRoute() {
   const [error, setError] = useState<string | null>(null);
   const [offline, setOffline] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
+  const [confirmingAbandon, setConfirmingAbandon] = useState(false);
+  const [abandoning, setAbandoning] = useState(false);
+  const [abandonError, setAbandonError] = useState(false);
 
   useEffect(() => {
     if (!session) {
@@ -63,7 +66,16 @@ export default function ActiveResumeRoute() {
   return (
     <SafeAreaView className="flex-1 bg-background">
       <ScrollView contentContainerStyle={{ gap: 20, padding: 24 }}>
-        <ActiveQuestUi state={state} />
+        <ActiveQuestUi state={state} {...(quest && !offline ? { onAbandon: () => {
+          setAbandonError(false); setConfirmingAbandon(true);
+        } } : {})} />
+        {confirmingAbandon && quest ? <AbandonConfirmation loading={abandoning} error={abandonError}
+          onCancel={() => setConfirmingAbandon(false)} onConfirm={() => {
+            if (abandoning) return;
+            setAbandoning(true); setAbandonError(false);
+            void abandonQuest(getSupabaseClient(), quest.id).then(() => router.replace('/')).catch(() => setAbandonError(true))
+              .finally(() => setAbandoning(false));
+          }} /> : null}
         <Button variant="secondary" onPress={() => router.replace('/')}>{developmentCopy.active.backToExplore}</Button>
       </ScrollView>
     </SafeAreaView>
