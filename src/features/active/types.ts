@@ -1,4 +1,5 @@
 import type { Json } from '@/types/database.generated';
+import type { QuestLocationSnapshot } from './map-link';
 
 export type ActiveQuestSummary = {
   id: string;
@@ -18,6 +19,8 @@ export type ActiveQuestDetail = ActiveQuestSummary & {
   baseXp: number;
   physicalDemand: string;
   safetyNotes: string;
+  location?: QuestLocationSnapshot;
+  locationMode: 'none' | 'area' | 'place';
 };
 
 export type ActiveQuestUiState =

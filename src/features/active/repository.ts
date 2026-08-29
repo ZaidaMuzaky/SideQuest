@@ -11,6 +11,13 @@ function number(value: unknown) { return typeof value === 'number' && Number.isF
 
 export function toActiveQuestDetail(summary: ActiveQuestSummary): ActiveQuestDetail {
   const snapshot = snapshotObject(summary.snapshot);
+  const rawLocation = snapshotObject(snapshot.location as ActiveQuestSummary['snapshot']);
+  const latitude = typeof rawLocation.latitude === 'number' && Number.isFinite(rawLocation.latitude) ? rawLocation.latitude : undefined;
+  const longitude = typeof rawLocation.longitude === 'number' && Number.isFinite(rawLocation.longitude) ? rawLocation.longitude : undefined;
+  const locationName = text(rawLocation.name);
+  const externalMapUrl = text(rawLocation.external_map_url);
+  const address = text(rawLocation.address);
+  const locationMode = snapshot.location_mode === 'place' || snapshot.location_mode === 'area' ? snapshot.location_mode : 'none';
   return {
     ...summary,
     title: text(snapshot.title) || summary.title,
@@ -23,6 +30,10 @@ export function toActiveQuestDetail(summary: ActiveQuestSummary): ActiveQuestDet
     baseXp: number(snapshot.base_xp),
     physicalDemand: text(snapshot.physical_demand),
     safetyNotes: text(snapshot.safety_notes),
+    locationMode,
+    ...(locationName ? { location: { name: locationName, ...(latitude === undefined ? {} : { latitude }),
+      ...(longitude === undefined ? {} : { longitude }), ...(externalMapUrl ? { externalMapUrl } : {}),
+      ...(address ? { address } : {}) } } : {}),
   };
 }
 

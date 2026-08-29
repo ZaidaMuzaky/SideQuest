@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react-native';
+import { act, fireEvent, render } from '@testing-library/react-native';
 import type { ReactNode } from 'react';
 
 import { ThemeProvider } from '@/theme';
@@ -9,7 +9,7 @@ const wrapper = ({ children }: { children: ReactNode }) => <ThemeProvider initia
 const quest: ActiveQuestDetail = { id: 'q1', title: 'Sunset sketch', category: '5', snapshot: {}, description: 'Draw the view.',
   instructions: ['Find a public spot', 'Sketch three shapes'], categorySlug: 'creative', durationMinutes: { min: 20, max: 30 },
   estimatedCost: { min: 0, max: 0, currency: 'IDR' }, difficulty: 'easy', baseXp: 50,
-  physicalDemand: 'Low', safetyNotes: 'Stay in a public place.' };
+  physicalDemand: 'Low', safetyNotes: 'Stay in a public place.', locationMode: 'none' };
 
 test('SQ-0402 renders the immutable Active snapshot and accessible actions', async () => {
   const addProof = jest.fn();
@@ -46,4 +46,25 @@ test('SQ-0402 renders a retryable recovery error', async () => {
 test('SQ-0402 renders the no-Active recovery state', async () => {
   const empty = await render(<ActiveQuestUi state={{ kind: 'empty' }} />, { wrapper });
   expect(empty.getByText('No Active Quest')).toBeTruthy();
+});
+
+test('SQ-0403 opens maps only for a valid snapshotted place', async () => {
+  const openMap = jest.fn(async () => true);
+  const placeQuest = { ...quest, location: { name: 'Museum', latitude: -6.2, longitude: 106.8, address: 'Public square' } };
+  const view = await render(<ActiveQuestUi state={{ kind: 'active', quest: placeQuest }} onOpenMap={openMap} />, { wrapper });
+  await act(async () => { fireEvent.press(view.getByRole('button', { name: 'Open Maps' })); });
+  expect(openMap).toHaveBeenCalledWith('https://www.google.com/maps/search/?api=1&query=-6.2%2C106.8%20(Museum)');
+  expect(view.getByText('Address: Public square')).toBeTruthy();
+});
+
+test('SQ-0403 shows fallback copy when no supported map app opens', async () => {
+  const placeQuest = { ...quest, location: { name: 'Museum', externalMapUrl: 'https://maps.apple.com/?q=Museum' } };
+  const view = await render(<ActiveQuestUi state={{ kind: 'active', quest: placeQuest }} onOpenMap={async () => false} />, { wrapper });
+  await act(async () => { fireEvent.press(view.getByRole('button', { name: 'Open Maps' })); });
+  expect(await view.findByText('No supported map app is available. Use the address and instructions instead.')).toBeTruthy();
+});
+
+test('SQ-0403 shows no map dependency for a non-location Quest', async () => {
+  const view = await render(<ActiveQuestUi state={{ kind: 'active', quest }} />, { wrapper });
+  expect(view.queryByRole('button', { name: 'Open Maps' })).toBeNull();
 });
