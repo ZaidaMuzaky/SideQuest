@@ -5,7 +5,7 @@ test('SQ-0104 rejects invalid preference values', () => expect(validateOnboardin
 test('SQ-0104 save is safely repeatable with the same values', async () => {
   const update = jest.fn(() => ({ eq: jest.fn(() => ({ is: jest.fn(async () => ({ error: null })) })) }));
   const from = jest.fn(() => ({ update }));
-  const client = { from } as never;
+  const client = { from: from } as never;
   await saveOnboarding(client, 'user-1', ONBOARDING_DEFAULTS);
   await saveOnboarding(client, 'user-1', ONBOARDING_DEFAULTS);
   expect(update).toHaveBeenCalledTimes(4);
