@@ -8,4 +8,5 @@ export const developmentCopy = {
   errorTitle: 'Something went wrong',
   errorDescription: 'Please try again. If this continues, share the reference shown by support.',
   retry: 'Try again',
+  authRequired: 'Authentication required',
 } as const;
