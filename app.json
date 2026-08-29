@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "SideQuest",
+    "slug": "sidequest",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "sidequest",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sidequest.app"
+    },
+    "android": {
+      "package": "com.sidequest.app",
+      "predictiveBackGestureEnabled": true
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

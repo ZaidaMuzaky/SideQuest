@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-background: 248 247 244;
+  --color-surface: 255 255 255;
+  --color-surface-elevated: 255 255 255;
+  --color-text-primary: 20 24 35;
+  --color-text-secondary: 82 91 111;
+  --color-border: 213 217 226;
+  --color-primary: 79 70 229;
+  --color-primary-pressed: 67 56 202;
+  --color-accent: 13 148 136;
+  --color-success: 22 125 82;
+  --color-warning: 180 83 9;
+  --color-danger: 190 39 55;
+  --color-danger-pressed: 159 32 47;
+  --color-focus: 67 56 202;
+  --color-disabled: 226 228 234;
+  --color-disabled-text: 100 108 126;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: 12 17 29;
+    --color-surface: 22 29 45;
+    --color-surface-elevated: 30 39 58;
+    --color-text-primary: 245 247 251;
+    --color-text-secondary: 178 186 203;
+    --color-border: 62 72 93;
+    --color-primary: 129 140 248;
+    --color-primary-pressed: 165 180 252;
+    --color-accent: 45 212 191;
+    --color-success: 74 222 128;
+    --color-warning: 251 191 36;
+    --color-danger: 251 113 133;
+    --color-danger-pressed: 253 164 175;
+    --color-focus: 165 180 252;
+    --color-disabled: 49 58 76;
+    --color-disabled-text: 163 172 192;
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "name": "sidequest",
+  "version": "0.1.0",
+  "private": true,
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "lint": "expo lint",
+    "typecheck": "tsc --noEmit",
+    "test": "jest --runInBand",
+    "config:check": "expo config --type public",
+    "supabase:start": "supabase start",
+    "supabase:stop": "supabase stop",
+    "supabase:status": "supabase status",
+    "supabase:reset": "supabase db reset",
+    "supabase:types": "node scripts/generate-supabase-types.mjs",
+    "supabase:test": "supabase test db",
+    "supabase:schema:check": "node scripts/validate-supabase-schema.mjs",
+    "supabase:authorization:check": "node scripts/validate-supabase-authorization.mjs",
+    "supabase:seed:check": "node scripts/validate-supabase-seed.mjs",
+    "supabase:remote:guard:test": "node --test scripts/supabase-remote-guard.test.mjs",
+    "supabase:remote:tap:test": "node --test scripts/supabase-remote-tap.test.mjs",
+    "supabase:remote:link": "node scripts/supabase-remote.mjs link",
+    "supabase:remote:check": "node scripts/supabase-remote.mjs check",
+    "supabase:remote:push": "node scripts/supabase-remote.mjs push",
+    "supabase:remote:test": "node scripts/supabase-remote.mjs test",
+    "supabase:remote:types": "node scripts/supabase-remote.mjs types"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.112.4",
+    "expo": "~57.0.17",
+    "expo-constants": "~57.0.15",
+    "expo-linking": "~57.0.8",
+    "expo-router": "~57.0.17",
+    "expo-sqlite": "~57.0.2",
+    "expo-status-bar": "~57.0.1",
+    "nativewind": "^4.2.6",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-reanimated": "4.5.1",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "~4.26.0",
+    "react-native-url-polyfill": "^4.0.0",
+    "react-native-web": "~0.21.0",
+    "react-native-worklets": "0.10.1"
+  },
+  "devDependencies": {
+    "@testing-library/react-native": "^14.0.1",
+    "@types/jest": "^29.5.14",
+    "@types/react": "~19.2.2",
+    "babel-preset-expo": "~57.0.9",
+    "eslint": "^9.39.1",
+    "eslint-config-expo": "~57.0.2",
+    "jest": "^29.7.0",
+    "jest-expo": "~57.0.5",
+    "supabase": "^2.116.0",
+    "tailwindcss": "^3.4.17",
+    "typescript": "~6.0.3"
+  },
+  "jest": {
+    "preset": "jest-expo",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/app/"
+    ]
+  }
+}
