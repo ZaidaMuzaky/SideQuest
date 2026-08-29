@@ -699,6 +699,7 @@ export type Database = {
       }
     }
     Functions: {
+      quest_server_time: { Args: never; Returns: string }
       match_quest: {
         Args: {
           p_area_code?: string | null

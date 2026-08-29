@@ -1,6 +1,6 @@
 export type CandidateUiState =
   | { kind: 'loading' }
-  | { kind: 'candidate'; candidate: Candidate }
+  | { kind: 'candidate'; candidate: Candidate; candidateExpiresAt?: string; serverTime?: string }
   | { kind: 'no-match' }
   | { kind: 'exhausted' }
   | { kind: 'expired' }

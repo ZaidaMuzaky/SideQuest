@@ -4,6 +4,7 @@ import { developmentCopy } from '@/constants/development-copy';
 import { AppText, Button, Card, EmptyState, ErrorState, LoadingState } from '@/components/ui';
 
 import type { CandidateUiState } from './types';
+import { CandidateExpiryCountdown } from './candidate-expiry-countdown';
 
 type CandidateUiProps = {
   state: CandidateUiState;
@@ -32,6 +33,9 @@ export function CandidateUi({ state, onAccept, onAdjustFilters, onReroll, onFind
     <Card accessibilityLabel={candidate.title} variant="elevated">
       <AppText accessibilityRole="header" variant="title">{candidate.title}</AppText>
       <AppText tone="secondary">{candidate.description}</AppText>
+      {state.candidateExpiresAt && state.serverTime ? (
+        <CandidateExpiryCountdown expiresAt={state.candidateExpiresAt} serverTime={state.serverTime} />
+      ) : null}
       <View accessibilityLabel={`${developmentCopy.candidate.category}: ${candidate.category}`}><AppText variant="label">{developmentCopy.candidate.category}</AppText><AppText>{candidate.category}</AppText></View>
       <AppText>{`${developmentCopy.candidate.duration}: ${candidate.duration}`}</AppText>
       <AppText>{`${developmentCopy.candidate.cost}: ${candidate.cost}`}</AppText>
