@@ -4,4 +4,8 @@ export const developmentCopy = {
   openRoutingCheck: 'Open routing check',
   routingReady: 'Expo Router Ready',
   returnHome: 'Return home',
+  loading: 'Loading SideQuest',
+  errorTitle: 'Something went wrong',
+  errorDescription: 'Please try again. If this continues, share the reference shown by support.',
+  retry: 'Try again',
 } as const;
