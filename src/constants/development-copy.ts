@@ -17,6 +17,7 @@ export const developmentCopy = {
   ageNotice: 'SideQuest is for people aged 18 and over.', saveAndExplore: 'Save and Explore', back: 'Back', retrySave: 'Retry save',
   continue: 'Continue', time: 'Time', budget: 'Budget', mood: 'Mood', distance: 'Distance',
   profileTitle: 'Edit preferences', profileIntro: 'Update your defaults for future quests.', savePreferences: 'Save preferences', preferencesSaved: 'Preferences saved.',
+  exploreTitle: 'Find a Quest', exploreIntro: 'Choose what fits your day, then we’ll find one Quest for you.', findQuest: 'Find a Quest', filtersRequired: 'Choose one option in each group before searching.', exploreLoadError: 'Unable to load your filters. Please retry.', searchReady: 'Your filters are ready to search.',
   options: {
     flexible: 'Flexible', surprise: 'Surprise me', thirtyMinutes: '30 minutes', oneHour: '1 hour', twoHours: '2 hours', halfDay: 'Half day',
     free: 'Free', under50000: 'Under Rp50.000', under100000: 'Under Rp100.000', walking: 'Walking', under3km: 'Under 3 km', under10km: 'Under 10 km',
