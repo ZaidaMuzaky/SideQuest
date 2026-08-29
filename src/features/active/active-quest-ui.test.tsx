@@ -68,3 +68,13 @@ test('SQ-0403 shows no map dependency for a non-location Quest', async () => {
   const view = await render(<ActiveQuestUi state={{ kind: 'active', quest }} />, { wrapper });
   expect(view.queryByRole('button', { name: 'Open Maps' })).toBeNull();
 });
+
+test.each([
+  ['safety_disabled' as const, 'This Quest was disabled for safety. Return to Explore to find another.'],
+  ['availability_expired' as const, 'This Quest is no longer available. Return to Explore to find another.'],
+])('SQ-0405 renders the authoritative %s terminal state without Active actions', async (reason, copy) => {
+  const view = await render(<ActiveQuestUi state={{ kind: 'expired', reason }} />, { wrapper });
+  expect(view.getByText('This Active Quest ended')).toBeTruthy();
+  expect(view.getByText(copy)).toBeTruthy();
+  expect(view.queryByRole('button', { name: 'Abandon Quest' })).toBeNull();
+});

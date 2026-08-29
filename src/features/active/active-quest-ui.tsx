@@ -20,6 +20,8 @@ export function ActiveQuestUi({ state, onAddProof, onComplete, onAbandon, onOpen
   if (state.kind === 'empty') return <EmptyState title={developmentCopy.active.emptyTitle} description={developmentCopy.active.emptyDescription} />;
   if (state.kind === 'error') return <ErrorState title={developmentCopy.active.errorTitle}
     description={developmentCopy.active.restoreError} retryLabel={developmentCopy.retry} onRetry={state.retry} />;
+  if (state.kind === 'expired') return <EmptyState title={developmentCopy.active.expiredTitle}
+    description={state.reason === 'safety_disabled' ? developmentCopy.active.safetyExpired : developmentCopy.active.availabilityExpired} />;
 
   const { quest, offline } = state;
   const mutationsDisabled = Boolean(offline);

@@ -27,4 +27,5 @@ export type ActiveQuestUiState =
   | { kind: 'loading' }
   | { kind: 'empty' }
   | { kind: 'error'; retry: () => void }
+  | { kind: 'expired'; reason: 'availability_expired' | 'safety_disabled' }
   | { kind: 'active'; quest: ActiveQuestDetail; offline?: boolean };

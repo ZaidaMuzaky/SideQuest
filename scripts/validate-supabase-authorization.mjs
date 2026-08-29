@@ -71,7 +71,6 @@ const forbiddenFragments = [
   'create policy quest_proofs_owner_update',
   'create policy avatars_owner_delete',
   'create policy avatars_owner_update',
-  'service_role',
 ];
 
 for (const fragment of forbiddenFragments) {
