@@ -7,6 +7,7 @@ import { developmentCopy } from '@/constants/development-copy';
 import { abandonQuest, AbandonConfirmation, ActiveQuestUi, getActiveQuest, toActiveQuestDetail, type ActiveQuestDetail } from '@/features/active';
 import { useSession } from '@/features/auth';
 import { getSupabaseClient } from '@/lib/supabase';
+import { ProofPickerUi } from '@/features/proof';
 
 export default function ActiveResumeRoute() {
   const { session } = useSession();
@@ -20,6 +21,7 @@ export default function ActiveResumeRoute() {
   const [confirmingAbandon, setConfirmingAbandon] = useState(false);
   const [abandoning, setAbandoning] = useState(false);
   const [abandonError, setAbandonError] = useState(false);
+  const [showProofPicker, setShowProofPicker] = useState(false);
 
   useEffect(() => {
     if (!session) {
@@ -66,9 +68,10 @@ export default function ActiveResumeRoute() {
   return (
     <SafeAreaView className="flex-1 bg-background">
       <ScrollView contentContainerStyle={{ gap: 20, padding: 24 }}>
-        <ActiveQuestUi state={state} {...(quest && !offline ? { onAbandon: () => {
+        <ActiveQuestUi state={state} {...(quest && !offline ? { onAddProof: () => setShowProofPicker(true), onAbandon: () => {
           setAbandonError(false); setConfirmingAbandon(true);
         } } : {})} />
+        {showProofPicker && quest && !offline ? <ProofPickerUi onSelected={() => { /* SQ-0502 owns upload/registration. */ }} /> : null}
         {confirmingAbandon && quest ? <AbandonConfirmation loading={abandoning} error={abandonError}
           onCancel={() => setConfirmingAbandon(false)} onConfirm={() => {
             if (abandoning) return;
