@@ -9,4 +9,8 @@ export const developmentCopy = {
   errorDescription: 'Please try again. If this continues, share the reference shown by support.',
   retry: 'Try again',
   authRequired: 'Authentication required',
+  email: 'Email',
+  password: 'Password',
+  signIn: 'Sign in',
+  signOut: 'Sign out',
 } as const;

@@ -20,5 +20,5 @@ export default function AuthBoundary() {
     catch (cause: unknown) { setError(safeAuthMessage(cause)); }
     finally { setLoading(false); }
   };
-  return <SafeAreaView className="flex-1 bg-background"><View className="flex-1 items-center justify-center gap-4 px-6"><AppText variant="title">{developmentCopy.authRequired}</AppText><Input label="Email" autoCapitalize="none" keyboardType="email-address" value={email} onChangeText={setEmail} /><Input label="Password" secureTextEntry value={password} onChangeText={setPassword} {...(error ? { errorMessage: error } : {})} /><Button loading={loading} onPress={() => void submit()}>Sign in</Button></View></SafeAreaView>;
+  return <SafeAreaView className="flex-1 bg-background"><View className="flex-1 items-center justify-center gap-4 px-6"><AppText variant="title">{developmentCopy.authRequired}</AppText><Input label={developmentCopy.email} autoCapitalize="none" keyboardType="email-address" value={email} onChangeText={setEmail} /><Input label={developmentCopy.password} secureTextEntry value={password} onChangeText={setPassword} {...(error ? { errorMessage: error } : {})} /><Button loading={loading} onPress={() => void submit()}>{developmentCopy.signIn}</Button></View></SafeAreaView>;
 }
