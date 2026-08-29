@@ -23,13 +23,17 @@ Location modes:
 ## Matching algorithm
 
 1. Validate enum/range inputs and rate limit.
-2. Build eligible set: enabled immutable template version; safe/moderated; category match (or all seeded categories for Random); max duration within selected time; `estimated_cost_max` within the selected ceiling; currency `IDR`; availability window valid.
+2. Build eligible set: enabled immutable template version; approved by the existing catalog/moderation lifecycle; category match (or all seeded categories for Random); max duration within selected time; `estimated_cost_max` within the selected ceiling; currency `IDR`; availability window valid. A disabled, moderated-out, safety-invalidated, or otherwise unavailable template is ineligible; no separate safety score or taxonomy exists for MVP.
 3. For `place`, require fresh-enough foreground coordinates and a currently eligible curated public Location within selected distance. For `area`, require an eligible known `area_code`. When foreground location is unavailable, exclude `place`, exclude `area` unless an eligible area is already known without additional input, and keep `none` eligible. Manual area selection is P1.
 4. Exclude the existing Active Quest’s template, templates rerolled in the search session, and templates completed within a configurable cooldown (default 30 days) when alternatives exist.
-5. Score: constraint specificity/fit 50%, novelty 30%, catalog priority/availability confidence 20%. Add a small deterministic hash of user + search request + template to break ties reproducibly.
+5. Score only the eligible set. Normalize deterministic time, budget, and location/distance compatibility to `0.0..1.0`, then calculate `score = (time * 0.50) + (budget * 0.30) + (location * 0.20)`. If an integer score is needed, use `round(score * 100)`. Component rules use only the documented time, budget, distance, and location-mode ceilings; they do not add fuzzy categories, personalization, or probabilistic ranking. Add a deterministic hash of user + search request + template only to break equal scores reproducibly.
 6. Select the top eligible template/location, snapshot it into a Candidate Instance, and return fit explanations.
 
-Budget ceilings: Free = 0 (and requires min/max 0); ≤Rp50,000; ≤Rp100,000; Flexible has no user ceiling but still displays the estimate. Matching compares `estimated_cost_max` to the ceiling. Currency is `IDR` in MVP without conversion/multi-currency UI. Walking distance is locked to an estimated 1 km for MVP; launch research may revisit it later. Half day is 240 minutes.
+Eligibility always runs before scoring and ranking. A high score cannot make an ineligible Quest eligible, and hard constraints are never converted into score penalties.
+
+Budget ceilings: Free = 0 (and requires min/max 0); ≤Rp50,000; ≤Rp100,000. Flexible remains the visible no-user-ceiling preference, but discovery applies an internal MVP consumer-safety ceiling of Rp250,000. This is not a visible tier or new budget category. Matching compares `estimated_cost_max` to the applicable inclusive ceiling. Currency is `IDR` in MVP without conversion/multi-currency UI. Walking distance is locked to an estimated 1 km for MVP; launch research may revisit it later. Half day is 240 minutes.
+
+Availability is evaluated server-side in the Quest location's local wall-clock time. A non-null availability object has the canonical MVP shape `{ "days": [1, 2, 3, 4, 5], "start_time": "09:00", "end_time": "18:00", "valid_from": null, "valid_until": null }`: `days` contains unique ISO weekdays 1 (Monday) through 7 (Sunday), times use `HH:mm`, and optional date bounds use ISO calendar dates. Bounds are inclusive; null bounds add no date restriction. Missing/NULL availability means generally available unless another approved rule disables the Quest. Malformed availability is rejected. The client may display availability but never decides eligibility. MVP does not use RRULE, cron, holiday APIs, or an external calendar provider.
 
 ## Reroll and duplicates
 
@@ -68,4 +72,4 @@ Templates MUST NOT require trespass, illegal behavior, interacting with traffic,
 
 ## Location versus non-location behavior
 
-`place` Quests use foreground coordinates only for eligibility and snapshot the chosen public Location, not the user’s route. Map actions are generated primarily from latitude, longitude, and location name; a validated optional HTTPS override may be used. `area` uses a controlled `area_code`; `none` has no location dependency. SideQuest does not track arrival or provide turn-by-turn navigation.
+`place` Quests use foreground coordinates only for eligibility and snapshot the chosen public Location, not the user’s route. Map actions are generated primarily from latitude, longitude, and location name; a validated optional HTTPS override may be used. `area` uses an `area_code` originating from SideQuest-controlled Quest template/location seed or catalog data; the mobile client cannot submit arbitrary free text. An area Quest can match only an identifier already present in that approved data. `none` has no location dependency. SideQuest does not track arrival or provide turn-by-turn navigation.

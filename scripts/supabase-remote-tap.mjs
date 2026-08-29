@@ -1,4 +1,4 @@
-const assertionNames = new Set(['is', 'lives_ok', 'throws_ok', 'hasnt_column', 'results_eq']);
+const assertionNames = new Set(['is', 'isnt', 'ok', 'like', 'lives_ok', 'throws_ok', 'hasnt_column', 'results_eq']);
 const beginMarker = '__SIDEQUEST_TAP_BEGIN__';
 const endMarker = '__SIDEQUEST_TAP_END__';
 

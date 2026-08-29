@@ -650,7 +650,20 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      match_quest: {
+        Args: {
+          p_area_code?: string | null
+          p_budget_filter: string
+          p_distance_filter: string
+          p_latitude?: number | null
+          p_longitude?: number | null
+          p_mood_filter: string
+          p_search_id: string
+          p_time_filter: string
+          p_timezone?: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       difficulty: "easy" | "medium" | "hard"

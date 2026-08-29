@@ -16,7 +16,7 @@ These are logical contracts; implement as typed repository calls plus PostgreSQL
 
 ### `match_quest`
 
-Input: search UUID, time/budget/mood/distance enum, optional coordinate/already-known area, timezone. Output: Candidate Instance snapshot or typed no-match reason/suggestions. Validates auth, rate limits, template safety/availability, and filters. Without foreground location it excludes `place` and excludes `area` unless eligible area context is already known. It does not persist raw coordinates.
+Input: search UUID, time/budget/mood/distance enum, optional coordinate/already-known controlled area, timezone. Output: Candidate Instance snapshot or typed no-match reason/suggestions. Validates auth, rate limits, existing authoritative catalog/moderation state, server-owned availability, and hard filters before scoring. Flexible applies the internal Rp250,000 discovery ceiling without exposing a new preference. Eligible candidates receive deterministic normalized time/budget/location compatibility with 50/30/20 weighting; hard failures never become soft penalties. Without foreground location it excludes `place` and excludes `area` unless eligible controlled area context is already known. Arbitrary client area text is rejected, and raw coordinates are never persisted.
 
 ### `reroll_quest`
 

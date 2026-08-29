@@ -13,7 +13,6 @@ export type MatchRequest = Readonly<{
   distance: DistanceFilter;
   knownEligibleAreaCode?: string;
   hasUsableForegroundLocation: boolean;
-  flexibleBudgetSafetyCeiling: number;
 }>;
 
 export type MatchTemplate = Readonly<{
@@ -24,7 +23,6 @@ export type MatchTemplate = Readonly<{
   enabledAt: Date | null;
   disabledAt: Date | null;
   availabilityEligible: boolean;
-  safetyEligible: boolean;
   durationMin: number;
   durationMax: number;
   estimatedCostMin: number;
@@ -33,9 +31,14 @@ export type MatchTemplate = Readonly<{
   locationMode: LocationMode;
   areaCodes?: readonly string[];
   location?: Readonly<{ enabled: boolean; hasCoordinates: boolean; distanceKm: number }>;
-  fitScore: number;
-  noveltyScore: number;
-  catalogConfidenceScore: number;
+}>;
+
+export type AvailabilityWindow = Readonly<{
+  days: readonly number[];
+  start_time: string;
+  end_time: string;
+  valid_from: string | null;
+  valid_until: string | null;
 }>;
 
 const TIME_CEILINGS: Record<TimeFilter, number> = {
@@ -47,6 +50,7 @@ const BUDGET_CEILINGS: Record<Exclude<BudgetFilter, 'flexible'>, number> = {
 const DISTANCE_CEILINGS: Record<Exclude<DistanceFilter, 'flexible'>, number> = {
   walking: 1, under_3_km: 3, under_10_km: 10,
 };
+export const FLEXIBLE_BUDGET_SAFETY_CEILING_IDR = 250_000;
 
 export function isEligibleTemplate(template: MatchTemplate, request: MatchRequest, now: Date): boolean {
   if (!QUEST_CATEGORIES.includes(template.category) || !template.categoryEnabled) return false;
@@ -59,9 +63,8 @@ export function isEligibleTemplate(template: MatchTemplate, request: MatchReques
   if (request.budget === 'free') {
     if (template.estimatedCostMin !== 0 || template.estimatedCostMax !== 0) return false;
   } else if (request.budget === 'flexible') {
-    if (template.estimatedCostMax > request.flexibleBudgetSafetyCeiling) return false;
+    if (template.estimatedCostMax > FLEXIBLE_BUDGET_SAFETY_CEILING_IDR) return false;
   } else if (template.estimatedCostMax > BUDGET_CEILINGS[request.budget]) return false;
-  if (!template.safetyEligible) return false;
 
   if (template.locationMode === 'none') return true;
   if (template.locationMode === 'area') {
@@ -71,11 +74,53 @@ export function isEligibleTemplate(template: MatchTemplate, request: MatchReques
   return request.distance === 'flexible' || template.location.distanceKm <= DISTANCE_CEILINGS[request.distance];
 }
 
-export function weightedMatchScore(template: MatchTemplate): number {
-  for (const score of [template.fitScore, template.noveltyScore, template.catalogConfidenceScore]) {
-    if (!Number.isFinite(score) || score < 0 || score > 1) throw new RangeError('Match score components must be normalized from 0 to 1');
+export function compatibilityScores(template: MatchTemplate, request: MatchRequest) {
+  const time = Math.max(0, 1 - template.durationMax / TIME_CEILINGS[request.time]);
+  const budgetCeiling = request.budget === 'flexible'
+    ? FLEXIBLE_BUDGET_SAFETY_CEILING_IDR
+    : BUDGET_CEILINGS[request.budget];
+  const budget = budgetCeiling === 0 ? 1 : Math.max(0, 1 - template.estimatedCostMax / budgetCeiling);
+  let location = 1;
+  if (template.locationMode === 'place') {
+    const distance = template.location?.distanceKm ?? Number.POSITIVE_INFINITY;
+    location = request.distance === 'flexible'
+      ? 1 / (1 + distance)
+      : Math.max(0, 1 - distance / DISTANCE_CEILINGS[request.distance]);
   }
-  return template.fitScore * 0.5 + template.noveltyScore * 0.3 + template.catalogConfidenceScore * 0.2;
+  return { time, budget, location, total: time * 0.5 + budget * 0.3 + location * 0.2 } as const;
+}
+
+export function isAvailabilityWindow(value: unknown): value is AvailabilityWindow {
+  if (typeof value !== 'object' || value === null) return false;
+  const item = value as Record<string, unknown>;
+  const keys = Object.keys(item);
+  if (!keys.includes('days') || !keys.includes('start_time') || !keys.includes('end_time')
+    || keys.some((key) => !['days', 'start_time', 'end_time', 'valid_from', 'valid_until'].includes(key))) return false;
+  const time = /^([01]\d|2[0-3]):[0-5]\d$/;
+  const validDate = (candidate: unknown) => {
+    if (typeof candidate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(candidate)) return false;
+    return new Date(`${candidate}T00:00:00.000Z`).toISOString().slice(0, 10) === candidate;
+  };
+  return Array.isArray(item.days) && item.days.length > 0
+    && item.days.every((day) => Number.isInteger(day) && Number(day) >= 1 && Number(day) <= 7)
+    && new Set(item.days).size === item.days.length
+    && typeof item.start_time === 'string' && time.test(item.start_time)
+    && typeof item.end_time === 'string' && time.test(item.end_time)
+    && item.start_time < item.end_time
+    && (item.valid_from === undefined || item.valid_from === null || validDate(item.valid_from))
+    && (item.valid_until === undefined || item.valid_until === null || validDate(item.valid_until))
+    && (item.valid_from == null || item.valid_until == null || String(item.valid_from) <= String(item.valid_until));
+}
+
+export function isAvailableAt(window: AvailabilityWindow | null, localDateTime: Date): boolean {
+  if (!window) return true;
+  const date = localDateTime.toISOString().slice(0, 10);
+  const time = localDateTime.toISOString().slice(11, 16);
+  const isoDay = localDateTime.getUTCDay() || 7;
+  return window.days.includes(isoDay)
+    && time >= window.start_time && time <= window.end_time
+    && (!window.valid_from || date >= window.valid_from)
+    && (!window.valid_until || date <= window.valid_until);
 }
 
 function deterministicTieBreaker(value: string): number {
@@ -111,7 +156,7 @@ export function rankEligibleTemplates(
   });
   const pool = novel.length > 0 ? novel : eligible;
   return [...pool].sort((left, right) => {
-    const scoreDifference = weightedMatchScore(right) - weightedMatchScore(left);
+    const scoreDifference = compatibilityScores(right, request).total - compatibilityScores(left, request).total;
     if (scoreDifference !== 0) return scoreDifference;
     const leftTie = deterministicTieBreaker(`${context.userId}:${context.searchId}:${left.id}`);
     const rightTie = deterministicTieBreaker(`${context.userId}:${context.searchId}:${right.id}`);

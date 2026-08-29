@@ -39,6 +39,15 @@ None of the unresolved questions below blocks Epic 0. Each blocks only the named
 
 ## Resolved MVP decisions
 
+### SQ-0302 — Deterministic matching contract
+
+- **Decision:** resolved 2026-08-29 — eligibility precedes deterministic ranking; eligible candidates use normalized time/budget/location compatibility weighted 50/30/20.
+- **Budget:** Flexible remains one visible preference and uses an internal Rp250,000 MVP discovery ceiling.
+- **Availability:** the backend owns the validated ISO-weekday, local `HH:mm`, and optional ISO-date-bounds contract; null means generally available absent another disabling rule.
+- **Area and safety:** area identifiers come only from SideQuest-controlled catalog data; safety uses existing catalog/moderation availability and `safety_disabled` lifecycle semantics, without a new score or taxonomy.
+- **Rationale:** resolves the matching RPC contract deterministically without adding user preferences, geography vendors, calendar engines, ML, or speculative schema.
+- **Affected:** FR-MATCH-001–003/006, AC-MATCH-001/002, `SQ-0302`.
+
 ### OQ-002 — Walking distance
 
 - **Decision:** resolved 2026-08-27 — walking distance is an estimated **1 km** for MVP.

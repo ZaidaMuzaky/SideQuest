@@ -41,7 +41,7 @@ Seeded taxonomy for display/configuration. `id smallint` PK, `slug text` UNIQUE,
 
 ### `locations`
 
-Specific curated public places only; never geographic-area records or a user tracking log. `area_code` is a controlled launch/discovery-area identifier kept simple for MVP.
+Specific curated public places only; never geographic-area records or a user tracking log. `area_code` is a controlled launch/discovery-area identifier originating from SideQuest-managed Quest template/location seed or catalog data. It is geography-agnostic and is never accepted as arbitrary mobile-client free text; MVP adds neither a launch-city constant nor a third-party geography provider for it.
 
 | Field | Type | Rules |
 |---|---|---|
@@ -52,7 +52,7 @@ Specific curated public places only; never geographic-area records or a user tra
 | address | text | nullable |
 | external_map_url | text | nullable, validated HTTPS override/fallback; not primary map source |
 | timezone | text | NOT NULL IANA zone |
-| availability_json | jsonb | nullable, validated structure |
+| availability_json | jsonb | nullable; validated canonical availability object described below |
 | is_enabled | boolean | NOT NULL default true |
 | created_at / updated_at | timestamptz | NOT NULL |
 
@@ -77,13 +77,15 @@ Index: `area_code, is_enabled`; spatial extension/index is optional only when ne
 | area_codes | text[] | nullable; every value must come from the controlled area-code catalog/configuration |
 | location_id | uuid | nullable FK locations; required only for `place` |
 | physical_demand / safety_notes | text | NOT NULL |
-| availability_json | jsonb | nullable |
+| availability_json | jsonb | nullable; validated canonical availability object described below |
 | moderation_status | text | NOT NULL check approved/draft/disabled |
 | priority | smallint | NOT NULL default 0 |
 | enabled_at / disabled_at | timestamptz | nullable |
 | created_at / updated_at | timestamptz | NOT NULL |
 
 Each content version is a new immutable row. Never update historical version content in place. `id` is the sole primary key; `(template_family_id, version)` is unique. Quest Instances reference the exact row through `template_id`. No composite primary key is used.
+
+For both locations and templates, non-null `availability_json` has exactly the MVP fields `days`, `start_time`, `end_time`, `valid_from`, and `valid_until`. `days` is a non-empty array of unique ISO weekday integers 1–7; `start_time` and `end_time` are local Quest-location wall-clock `HH:mm` values with start before end; date bounds are null or ISO `YYYY-MM-DD` calendar dates with `valid_from <= valid_until`. Null availability means generally available unless another authoritative lifecycle rule disables the record. Database validation rejects malformed values; the server evaluates weekday, inclusive date bounds, and the local time window.
 
 Indexes: approved/enabled/category; location; GIN area_codes only if query evidence supports it.
 

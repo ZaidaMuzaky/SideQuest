@@ -1,8 +1,8 @@
-import { isEligibleTemplate, rankEligibleTemplates, weightedMatchScore, type MatchRequest, type MatchTemplate } from './domain';
+import { compatibilityScores, isAvailabilityWindow, isAvailableAt, isEligibleTemplate, rankEligibleTemplates, type MatchRequest, type MatchTemplate } from './domain';
 
 const now = new Date('2026-08-29T00:00:00.000Z');
-const request: MatchRequest = { time: '1_hour', budget: 'under_50000', mood: 'chill', distance: 'under_3_km', hasUsableForegroundLocation: true, flexibleBudgetSafetyCeiling: 250_000 };
-const baseline: MatchTemplate = { id: 'template-a', category: 'chill', categoryEnabled: true, moderationStatus: 'approved', enabledAt: new Date('2026-01-01'), disabledAt: null, availabilityEligible: true, safetyEligible: true, durationMin: 20, durationMax: 60, estimatedCostMin: 0, estimatedCostMax: 50_000, currencyCode: 'IDR', locationMode: 'none', fitScore: 1, noveltyScore: 1, catalogConfidenceScore: 1 };
+const request: MatchRequest = { time: '1_hour', budget: 'under_50000', mood: 'chill', distance: 'under_3_km', hasUsableForegroundLocation: true };
+const baseline: MatchTemplate = { id: 'template-a', category: 'chill', categoryEnabled: true, moderationStatus: 'approved', enabledAt: new Date('2026-01-01'), disabledAt: null, availabilityEligible: true, durationMin: 20, durationMax: 60, estimatedCostMin: 0, estimatedCostMax: 50_000, currencyCode: 'IDR', locationMode: 'none' };
 const change = (values: Partial<MatchTemplate>) => ({ ...baseline, ...values });
 
 describe('SQ-0301 hard matching constraints (FR-MATCH-001/002)', () => {
@@ -33,7 +33,7 @@ describe('SQ-0301 hard matching constraints (FR-MATCH-001/002)', () => {
   test.each([
     { categoryEnabled: false }, { moderationStatus: 'draft' as const }, { availabilityEligible: false },
     { enabledAt: null }, { enabledAt: new Date('2026-08-29T00:00:00.001Z') }, { disabledAt: now },
-    { currencyCode: 'USD' }, { safetyEligible: false },
+    { currencyCode: 'USD' },
   ])('excludes unavailable, unsafe, or invalid catalog rows: %o', (values) => {
     expect(isEligibleTemplate(change(values), request, now)).toBe(false);
   });
@@ -98,13 +98,31 @@ describe('SQ-0301 novelty, exclusions, and deterministic scoring (FR-MATCH-003/0
     expect(rankEligibleTemplates([baseline], request, { ...context, completedAtByTemplateId: new Map([['template-a', boundary]]) })).toHaveLength(1);
   });
 
-  test('uses the documented weights and a stable deterministic tie break', () => {
-    expect(weightedMatchScore(change({ fitScore: 1, noveltyScore: 0, catalogConfidenceScore: 0 }))).toBe(0.5);
-    expect(weightedMatchScore(change({ fitScore: 0, noveltyScore: 1, catalogConfidenceScore: 0 }))).toBe(0.3);
-    expect(weightedMatchScore(change({ fitScore: 0, noveltyScore: 0, catalogConfidenceScore: 1 }))).toBe(0.2);
+  test('uses exact normalized 50/30/20 compatibility composition and a stable deterministic tie break', () => {
+    expect(compatibilityScores(change({ durationMax: 30, estimatedCostMax: 25_000, locationMode: 'place', location: { enabled: true, hasCoordinates: true, distanceKm: 1.5 } }), request)).toEqual({ time: 0.5, budget: 0.5, location: 0.5, total: 0.5 });
     const tied = [baseline, change({ id: 'template-b' })];
     const expected = rankEligibleTemplates(tied, request, context).map(({ id }) => id);
     expect(rankEligibleTemplates([...tied].reverse(), request, context).map(({ id }) => id)).toEqual(expected);
-    expect(() => weightedMatchScore(change({ fitScore: Number.NaN }))).toThrow(RangeError);
+  });
+});
+
+describe('SQ-0302 availability contract', () => {
+  const weekdays = { days: [1, 2, 3, 4, 5], start_time: '09:00', end_time: '18:00', valid_from: '2026-08-01', valid_until: '2026-08-31' } as const;
+  test('evaluates weekday, local wall-clock time, and inclusive date bounds', () => {
+    expect(isAvailabilityWindow(weekdays)).toBe(true);
+    expect(isAvailableAt(weekdays, new Date('2026-08-03T09:00:00Z'))).toBe(true);
+    expect(isAvailableAt(weekdays, new Date('2026-08-03T18:00:00Z'))).toBe(true);
+    expect(isAvailableAt(weekdays, new Date('2026-08-02T12:00:00Z'))).toBe(false);
+    expect(isAvailableAt(weekdays, new Date('2026-09-01T12:00:00Z'))).toBe(false);
+  });
+  test('treats NULL as generally available and rejects malformed structures', () => {
+    expect(isAvailableAt(null, now)).toBe(true);
+    expect(isAvailabilityWindow({ ...weekdays, days: [0] })).toBe(false);
+    expect(isAvailabilityWindow({ ...weekdays, days: [1, 1] })).toBe(false);
+    expect(isAvailabilityWindow({ ...weekdays, start_time: '25:00' })).toBe(false);
+    expect(isAvailabilityWindow({ ...weekdays, end_time: weekdays.start_time })).toBe(false);
+    expect(isAvailabilityWindow({ ...weekdays, valid_until: '2026-02-30' })).toBe(false);
+    expect(isAvailabilityWindow({ days: [1], start_time: '09:00', end_time: '18:00' })).toBe(true);
+    expect(isAvailabilityWindow({ ...weekdays, timezone: 'UTC' })).toBe(false);
   });
 });
