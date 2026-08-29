@@ -15,7 +15,7 @@ export default function ExploreScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searched, setSearched] = useState(false);
-  useEffect(() => { if (!session) { setLoading(false); return; } void getPreferences(getSupabaseClient(), session.user.id).then(setFilters).catch(() => setError(developmentCopy.exploreLoadError)).finally(() => setLoading(false)); }, [session]);
+  useEffect(() => { if (!session) { queueMicrotask(() => setLoading(false)); return; } void getPreferences(getSupabaseClient(), session.user.id).then(setFilters).catch(() => setError(developmentCopy.exploreLoadError)).finally(() => setLoading(false)); }, [session]);
   const set = (key: ExploreFilterKey, value: string) => { setSearched(false); setError(null); setFilters((old) => ({ ...old, [key]: value })); };
   const findQuest = () => { if (validateExploreFilters(filters)) { setError(developmentCopy.filtersRequired); return; } setError(null); setSearched(true); };
   const handleSignOut = async () => { try { await signOut(getSupabaseClient()); router.replace('/auth' as never); } catch (cause: unknown) { setError(safeAuthMessage(cause)); } };
