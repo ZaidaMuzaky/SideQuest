@@ -5,5 +5,6 @@ export * from './map-link';
 export * from './abandon-repository';
 export * from './abandon-confirmation';
 export * from './completion-repository';
+export * from './completion-celebration';
 export * from './resume-banner';
 export * from './types';
