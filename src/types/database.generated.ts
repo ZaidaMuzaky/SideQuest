@@ -699,6 +699,7 @@ export type Database = {
       }
     }
     Functions: {
+      register_quest_proof: { Args: { p_proof_id: string; p_quest_instance_id: string; p_storage_path: string; p_mime_type: string; p_byte_size: number; p_note?: string | null }; Returns: Json }
       expire_active_quest: { Args: { p_quest_instance_id: string; p_reason: string }; Returns: Json }
       abandon_quest: { Args: { p_quest_instance_id: string }; Returns: Json }
       accept_quest: { Args: { p_candidate_id: string }; Returns: Json }

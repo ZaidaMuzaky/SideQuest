@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { SafeAreaView, ScrollView } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import * as Crypto from 'expo-crypto';
 
 import { Button } from '@/components/ui';
 import { developmentCopy } from '@/constants/development-copy';
 import { abandonQuest, AbandonConfirmation, ActiveQuestUi, getActiveQuest, toActiveQuestDetail, type ActiveQuestDetail } from '@/features/active';
 import { useSession } from '@/features/auth';
 import { getSupabaseClient } from '@/lib/supabase';
-import { ProofPickerUi } from '@/features/proof';
+import { ProofPickerUi, ProofUploadUi, uploadAndRegisterProof, type ProofAsset } from '@/features/proof';
 
 export default function ActiveResumeRoute() {
   const { session } = useSession();
@@ -22,6 +23,8 @@ export default function ActiveResumeRoute() {
   const [abandoning, setAbandoning] = useState(false);
   const [abandonError, setAbandonError] = useState(false);
   const [showProofPicker, setShowProofPicker] = useState(false);
+  const [proofAsset, setProofAsset] = useState<ProofAsset>();
+  const [proofId, setProofId] = useState<string>();
 
   useEffect(() => {
     if (!session) {
@@ -71,7 +74,10 @@ export default function ActiveResumeRoute() {
         <ActiveQuestUi state={state} {...(quest && !offline ? { onAddProof: () => setShowProofPicker(true), onAbandon: () => {
           setAbandonError(false); setConfirmingAbandon(true);
         } } : {})} />
-        {showProofPicker && quest && !offline ? <ProofPickerUi onSelected={() => { /* SQ-0502 owns upload/registration. */ }} /> : null}
+        {showProofPicker && quest && !offline ? <ProofPickerUi onSelected={(asset) => { setProofAsset(asset); setProofId(Crypto.randomUUID()); }} /> : null}
+        {proofAsset && proofId && quest && session ? <ProofUploadUi upload={(onProgress) => uploadAndRegisterProof(getSupabaseClient(),{
+          userId:session.user.id,questInstanceId:quest.id,proofId,asset:proofAsset,onProgress,
+        })} onUploaded={() => { setShowProofPicker(false); setProofAsset(undefined); setProofId(undefined); setRetryKey((value)=>value+1); }} /> : null}
         {confirmingAbandon && quest ? <AbandonConfirmation loading={abandoning} error={abandonError}
           onCancel={() => setConfirmingAbandon(false)} onConfirm={() => {
             if (abandoning) return;
