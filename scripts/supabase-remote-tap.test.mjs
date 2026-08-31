@@ -59,6 +59,7 @@ for (const [file, plan] of [
   ['0503_complete_quest.test.sql', 19],
   ['0601_xp_level_contract.test.sql', 10],
   ['0702_history.test.sql', 14],
+  ['0703_avatar.test.sql', 13],
 ]) {
   test(`SQ-0005 remote TAP preparation preserves all assertions in ${file}`, () => {
     const source = readFileSync(resolve(process.cwd(), 'supabase/tests', file), 'utf8');

@@ -705,6 +705,9 @@ export type Database = {
       }
     }
     Functions: {
+      confirm_avatar_cleanup: { Args: { p_storage_path: string }; Returns: undefined }
+      list_avatar_cleanup: { Args: Record<PropertyKey, never>; Returns: { storage_path: string }[] }
+      replace_avatar: { Args: { p_expected_path?: string; p_new_path?: string }; Returns: Json }
       list_quest_history: {
         Args: { p_cursor_at?: string; p_cursor_id?: string; p_limit?: number; p_status?: string }
         Returns: { category_id: number; id: string; occurred_at: string; snapshot: Json; status: string; xp_awarded: number }[]

@@ -21,6 +21,7 @@ const tables = [
   'quest_completions',
   'user_progress',
   'xp_ledger',
+  'avatar_cleanup_queue',
 ];
 
 for (const table of tables) {
@@ -38,6 +39,7 @@ const requiredFragments = [
   'create policy quest_proofs_owner_select',
   'create policy avatars_owner_insert',
   'create policy avatars_owner_select',
+  'create policy avatars_owner_delete',
   'revoke execute on function public.validate_quest_proof_owner()',
   'from public, anon, authenticated',
   "avatar_path ~ ('^' || (select auth.uid())::text",
@@ -50,6 +52,7 @@ const requiredFragments = [
   'grant select, insert on table storage.objects to authenticated',
   'revoke update, delete, select on table storage.objects from public, anon',
   'revoke update, delete on table storage.objects from authenticated',
+  'grant delete on table storage.objects to authenticated',
   'create or replace function public.handle_new_user()',
   "values (new.id, 'flexible', 'flexible', 'random', 'flexible')",
   'create trigger on_auth_user_created',
@@ -69,7 +72,6 @@ if (terminalImagePathPatterns < 3) {
 const forbiddenFragments = [
   'create policy quest_proofs_owner_delete',
   'create policy quest_proofs_owner_update',
-  'create policy avatars_owner_delete',
   'create policy avatars_owner_update',
 ];
 
