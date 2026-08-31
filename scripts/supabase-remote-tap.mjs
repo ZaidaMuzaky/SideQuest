@@ -171,7 +171,7 @@ export const prepareRemoteTapSql = (source, testFile) => {
     const body = withoutLeadingTrivia(statement).trim();
     if (/^begin\s*;$/i.test(body)) {
       beginCount += 1;
-      return withLeadingTrivia(statement, `begin;\n\ncreate temporary table pg_temp.sidequest_tap_output (\n  sequence integer not null,\n  line text not null\n) on commit drop;\ngrant insert on table pg_temp.sidequest_tap_output to authenticated, anon;`);
+      return withLeadingTrivia(statement, `begin;\n\ncreate temporary table pg_temp.sidequest_tap_output (\n  sequence integer not null,\n  line text not null\n) on commit drop;\ngrant insert on table pg_temp.sidequest_tap_output to authenticated, anon, service_role;`);
     }
     if (/^rollback\s*;$/i.test(body)) {
       rollbackCount += 1;
