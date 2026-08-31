@@ -1,0 +1,15 @@
+begin;
+create extension if not exists pgtap with schema extensions;
+set local search_path=public,extensions;
+select plan(10);
+select is(public.quest_level_for_xp(0),1,'SQ-0601 level 1 starts at zero XP');
+select is(public.quest_level_for_xp(99),1,'SQ-0601 remains level 1 below 100 XP');
+select is(public.quest_level_for_xp(100),2,'SQ-0601 reaches level 2 at 100 XP');
+select is(public.quest_level_for_xp(299),2,'SQ-0601 remains level 2 below 300 XP');
+select is(public.quest_level_for_xp(300),3,'SQ-0601 reaches level 3 at 300 XP');
+select is(public.quest_level_for_xp(600),4,'SQ-0601 reaches level 4 at 600 XP');
+select is(public.quest_level_for_xp(1000),5,'SQ-0601 reaches level 5 at 1000 XP');
+select is(public.quest_xp_for_level(1),0::bigint,'SQ-0601 threshold for level 1');
+select is(public.quest_xp_for_level(5),1000::bigint,'SQ-0601 threshold for level 5');
+select ok(has_function_privilege('authenticated','public.quest_level_for_xp(bigint)','execute'),'SQ-0601 exposes threshold calculation to authenticated server clients');
+select * from finish(); rollback;

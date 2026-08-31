@@ -699,6 +699,8 @@ export type Database = {
       }
     }
     Functions: {
+      quest_level_for_xp: { Args: { p_xp: number }; Returns: number }
+      quest_xp_for_level: { Args: { p_level: number }; Returns: number }
       register_quest_proof: { Args: { p_proof_id: string; p_quest_instance_id: string; p_storage_path: string; p_mime_type: string; p_byte_size: number; p_note?: string | null }; Returns: Json }
       expire_active_quest: { Args: { p_quest_instance_id: string; p_reason: string }; Returns: Json }
       abandon_quest: { Args: { p_quest_instance_id: string }; Returns: Json }
