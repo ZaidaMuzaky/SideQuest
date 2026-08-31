@@ -4,5 +4,6 @@ export * from './active-quest-ui';
 export * from './map-link';
 export * from './abandon-repository';
 export * from './abandon-confirmation';
+export * from './completion-repository';
 export * from './resume-banner';
 export * from './types';

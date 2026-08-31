@@ -116,10 +116,12 @@ export type Database = {
       quest_completions: {
         Row: {
           completed_at: string
+          completed_count_after: number
           id: string
           idempotency_key: string
           level_after: number
           level_before: number
+          total_xp_after: number
           proof_id: string
           quest_instance_id: string
           user_id: string
@@ -127,10 +129,12 @@ export type Database = {
         }
         Insert: {
           completed_at?: string
+          completed_count_after: number
           id?: string
           idempotency_key: string
           level_after: number
           level_before: number
+          total_xp_after: number
           proof_id: string
           quest_instance_id: string
           user_id: string
@@ -138,10 +142,12 @@ export type Database = {
         }
         Update: {
           completed_at?: string
+          completed_count_after?: number
           id?: string
           idempotency_key?: string
           level_after?: number
           level_before?: number
+          total_xp_after?: number
           proof_id?: string
           quest_instance_id?: string
           user_id?: string
@@ -699,6 +705,7 @@ export type Database = {
       }
     }
     Functions: {
+      complete_quest: { Args: { p_quest_instance_id: string; p_idempotency_key: string }; Returns: Json }
       quest_level_for_xp: { Args: { p_xp: number }; Returns: number }
       quest_xp_for_level: { Args: { p_level: number }; Returns: number }
       register_quest_proof: { Args: { p_proof_id: string; p_quest_instance_id: string; p_storage_path: string; p_mime_type: string; p_byte_size: number; p_note?: string | null }; Returns: Json }

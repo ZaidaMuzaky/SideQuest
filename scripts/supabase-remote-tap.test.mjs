@@ -56,6 +56,7 @@ for (const [file, plan] of [
   ['0404_abandon_quest.test.sql', 14],
   ['0405_active_expiry.test.sql', 15],
   ['0502_register_proof.test.sql', 14],
+  ['0503_complete_quest.test.sql', 19],
   ['0601_xp_level_contract.test.sql', 10],
 ]) {
   test(`SQ-0005 remote TAP preparation preserves all assertions in ${file}`, () => {
