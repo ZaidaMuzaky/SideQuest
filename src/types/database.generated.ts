@@ -705,6 +705,10 @@ export type Database = {
       }
     }
     Functions: {
+      list_quest_history: {
+        Args: { p_cursor_at?: string; p_cursor_id?: string; p_limit?: number; p_status?: string }
+        Returns: { category_id: number; id: string; occurred_at: string; snapshot: Json; status: string; xp_awarded: number }[]
+      }
       complete_quest: { Args: { p_quest_instance_id: string; p_idempotency_key: string }; Returns: Json }
       quest_level_for_xp: { Args: { p_xp: number }; Returns: number }
       quest_xp_for_level: { Args: { p_level: number }; Returns: number }

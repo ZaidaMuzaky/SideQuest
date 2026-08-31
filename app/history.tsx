@@ -1,0 +1,19 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { SafeAreaView, ScrollView } from 'react-native';
+import { useRouter } from 'expo-router';
+import { AppText, Button } from '@/components/ui';
+import { developmentCopy } from '@/constants/development-copy';
+import { useSession } from '@/features/auth';
+import { HistoryFilters, HistoryList, listQuestHistory, type HistoryFilter, type HistoryItem } from '@/features/history';
+import { getSupabaseClient } from '@/lib/supabase';
+import { getActiveQuest, ResumeBanner, type ActiveQuestSummary } from '@/features/active';
+
+export default function HistoryRoute() {
+  const { session }=useSession(); const router=useRouter(); const [activeQuest,setActiveQuest]=useState<ActiveQuestSummary|null>(null); const [filter,setFilter]=useState<HistoryFilter>('all'); const [items,setItems]=useState<HistoryItem[]>([]); const [cursor,setCursor]=useState<string|null>(null); const [loading,setLoading]=useState(true); const [loadingMore,setLoadingMore]=useState(false); const [error,setError]=useState(false); const [paginationError,setPaginationError]=useState(false); const [retryKey,setRetryKey]=useState(0);
+  const generation=useRef(0);
+  const cache=useRef<Record<HistoryFilter,HistoryItem[]>>({all:[],completed:[],abandoned:[]});
+  useEffect(()=>{let mounted=true;const request=++generation.current;queueMicrotask(()=>{if(mounted){setLoading(true);setError(false);setItems(cache.current[filter]);setCursor(null);}});if(!session){queueMicrotask(()=>{if(mounted){setLoading(false);setError(true);}});return()=>{mounted=false;};}void listQuestHistory(getSupabaseClient(),session.user.id,filter==='all'?{}:{status:filter}).then((page)=>{if(mounted&&request===generation.current){cache.current[filter]=page.items;setItems(page.items);setCursor(page.nextCursor);}}).catch(()=>{if(mounted&&request===generation.current)setError(true);}).finally(()=>{if(mounted&&request===generation.current)setLoading(false);});return()=>{mounted=false;};},[filter,retryKey,session]);
+  useEffect(()=>{let mounted=true;if(!session)return;void getActiveQuest(getSupabaseClient(),session.user.id).then((value)=>{if(mounted)setActiveQuest(value);}).catch(()=>{if(mounted)setActiveQuest(null);});return()=>{mounted=false;};},[session]);
+  const loadMore=useCallback(()=>{if(!session||!cursor||loadingMore)return;const request=generation.current;setLoadingMore(true);setPaginationError(false);void listQuestHistory(getSupabaseClient(),session.user.id,{cursor,...(filter==='all'?{}:{status:filter})}).then((page)=>{if(request!==generation.current)return;setItems((current)=>{const known=new Set(current.map((item)=>item.id));const merged=[...current,...page.items.filter((item)=>!known.has(item.id))];cache.current[filter]=merged;return merged;});setCursor(page.nextCursor);}).catch(()=>{if(request===generation.current)setPaginationError(true);}).finally(()=>{if(request===generation.current)setLoadingMore(false);});},[cursor,filter,loadingMore,session]);
+  return <SafeAreaView className="flex-1 bg-background"><ScrollView contentContainerStyle={{gap:20,padding:24}}><AppText accessibilityRole="header" variant="heading">{developmentCopy.history.title}</AppText>{activeQuest?<ResumeBanner quest={activeQuest} onResume={()=>router.push({pathname:'/active',params:{id:activeQuest.id}} as never)}/>:null}<HistoryFilters filter={filter} onChange={setFilter}/><HistoryList items={items} loading={loading} error={error} loadingMore={loadingMore} paginationError={paginationError} hasMore={Boolean(cursor)} onRetry={()=>setRetryKey((v)=>v+1)} onLoadMore={loadMore} onOpen={(id)=>router.push({pathname:'/history-detail',params:{id}} as never)}/><Button variant="secondary" onPress={()=>router.back()}>{developmentCopy.back}</Button></ScrollView></SafeAreaView>;
+}
