@@ -48,7 +48,7 @@ reset role;
 select set_config('request.jwt.claim.role','authenticated',true);
 set local role authenticated;
 select throws_ok($$select public.expire_active_quest('04050000-0000-4000-8000-000000000403','safety_disabled')$$,
- '42501','Trusted server role required','SQ-0405 function also validates trusted role internally');
+ '42501','permission denied for function expire_active_quest','SQ-0405 keeps expiry execution unavailable to client roles');
 reset role;
 select * from finish();
 rollback;
