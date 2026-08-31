@@ -26,7 +26,8 @@
     "supabase:remote:check": "node scripts/supabase-remote.mjs check",
     "supabase:remote:push": "node scripts/supabase-remote.mjs push",
     "supabase:remote:test": "node scripts/supabase-remote.mjs test",
-    "supabase:remote:types": "node scripts/supabase-remote.mjs types"
+    "supabase:remote:types": "node scripts/supabase-remote.mjs types",
+    "supabase:proof:cleanup": "node scripts/supabase-proof-cleanup.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.4",
