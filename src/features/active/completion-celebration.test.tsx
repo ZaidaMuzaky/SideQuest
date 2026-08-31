@@ -9,7 +9,7 @@ const result = { status: 'completed' as const, outcome: 'completed' as const, co
 
 test('SQ-0504 presents immutable XP and level-up result with both actions', async () => {
   const find = jest.fn(); const history = jest.fn();
-  const view = render(<CompletionCelebration result={result} onFindAnother={find} onViewHistory={history} />, { wrapper });
+  const view = await render(<CompletionCelebration result={result} onFindAnother={find} onViewHistory={history} />, { wrapper });
   expect(view.getByText('Quest complete')).toBeTruthy();
   expect(view.getByText('XP gained: +150 XP')).toBeTruthy();
   expect(view.getByText('Level up!')).toBeTruthy();
@@ -18,6 +18,6 @@ test('SQ-0504 presents immutable XP and level-up result with both actions', asyn
 });
 
 test('SQ-0504 does not show level-up treatment when level is unchanged', async () => {
-  const view = render(<CompletionCelebration result={{ ...result, levelAfter: 2 }} onFindAnother={jest.fn()} onViewHistory={jest.fn()} />, { wrapper });
+  const view = await render(<CompletionCelebration result={{ ...result, levelAfter: 2 }} onFindAnother={jest.fn()} onViewHistory={jest.fn()} />, { wrapper });
   expect(view.queryByText('Level up!')).toBeNull();
 });
