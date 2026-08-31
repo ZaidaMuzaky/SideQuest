@@ -1,0 +1,3 @@
+import assert from 'node:assert/strict'; import { readFileSync } from 'node:fs'; import test from 'node:test';
+const source=readFileSync(new URL('../supabase/functions/delete-account/index.ts',import.meta.url),'utf8');
+test('SQ-0704 reauthenticates before cleanup and Auth deletion',()=>{assert.ok(source.indexOf('signInWithPassword')<source.indexOf('admin.auth.admin.deleteUser'));assert.ok(source.includes("['avatars', 'quest-proofs']"));assert.ok(source.includes('SUPABASE_SERVICE_ROLE_KEY'));assert.ok(source.includes('offset += 100'));assert.ok(source.includes("admin.auth.admin.signOut(userId, 'global')"));});
