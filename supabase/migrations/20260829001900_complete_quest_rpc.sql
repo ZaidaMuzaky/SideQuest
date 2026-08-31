@@ -1,8 +1,24 @@
 -- SQ-0503: atomic, idempotent Quest completion using the SQ-0601 level contract.
 
 alter table public.quest_completions
-  add column total_xp_after bigint not null,
-  add column completed_count_after integer not null,
+  add column total_xp_after bigint,
+  add column completed_count_after integer;
+
+alter table public.quest_completions disable trigger quest_completions_prevent_update;
+with historical as (
+  select id,
+    sum(xp_awarded) over(partition by user_id order by completed_at,id) as total_xp_after,
+    row_number() over(partition by user_id order by completed_at,id)::integer as completed_count_after
+  from public.quest_completions
+)
+update public.quest_completions as completion
+set total_xp_after=historical.total_xp_after,completed_count_after=historical.completed_count_after
+from historical where historical.id=completion.id;
+alter table public.quest_completions enable trigger quest_completions_prevent_update;
+
+alter table public.quest_completions
+  alter column total_xp_after set not null,
+  alter column completed_count_after set not null,
   add constraint quest_completions_total_xp_after_check check (total_xp_after >= xp_awarded),
   add constraint quest_completions_completed_count_after_check check (completed_count_after > 0);
 
