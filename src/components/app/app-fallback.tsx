@@ -13,11 +13,11 @@ export function AppLoadingFallback() {
   );
 }
 
-export function AppErrorFallback({ onRetry }: { onRetry: () => void }) {
+export function AppErrorFallback({ onRetry, description = developmentCopy.errorDescription }: { onRetry: () => void; description?: string }) {
   return (
     <SafeAreaView className="flex-1 bg-background">
       <View className="flex-1 items-center justify-center">
-        <ErrorState title={developmentCopy.errorTitle} description={developmentCopy.errorDescription} retryLabel={developmentCopy.retry} onRetry={onRetry} />
+        <ErrorState title={developmentCopy.errorTitle} description={description} retryLabel={developmentCopy.retry} onRetry={onRetry} />
       </View>
     </SafeAreaView>
   );

@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useMemo, useState, type PropsWith
 
 import { getSupabaseClient } from '@/lib/supabase';
 import { usePathname, useRouter } from 'expo-router';
-import { AppLoadingFallback } from '@/components/app/app-fallback';
+import { AppErrorFallback, AppLoadingFallback } from '@/components/app/app-fallback';
 
 import { restoreSession, routeDecision, subscribeToSession } from './session';
 
@@ -20,7 +20,11 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     let mounted = true;
-    const client = getSupabaseClient();
+    let client;
+    try { client = getSupabaseClient(); } catch (error: unknown) {
+      queueMicrotask(() => { if (mounted) setState({ session: null, isLoading: false, error: error instanceof Error ? error : new Error('Supabase configuration unavailable') }); });
+      return () => { mounted = false; };
+    }
     void restoreSession(client)
       .then((session) => {
         if (mounted) setState({ session, isLoading: false, error: null });
@@ -37,7 +41,9 @@ export function SessionProvider({ children }: PropsWithChildren) {
     };
   }, []);
 
-  return <SessionContext.Provider value={useMemo(() => state, [state])}>{children}</SessionContext.Provider>;
+  const value = useMemo(() => state, [state]);
+  const configError = state.error?.message.startsWith('Missing required public environment variable') || state.error?.message.includes('EXPO_PUBLIC_SUPABASE_URL');
+  return <SessionContext.Provider value={value}>{configError ? <AppErrorFallback onRetry={() => {}} description={`Development configuration error: ${state.error?.message}`} /> : children}</SessionContext.Provider>;
 }
 
 export function useSession(): SessionState {
