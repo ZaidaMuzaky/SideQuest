@@ -1,0 +1,10 @@
+{
+  "cli": { "version": ">= 12.0.0" },
+  "build": {
+    "device": {
+      "distribution": "internal",
+      "android": { "buildType": "apk" },
+      "env": { "EXPO_PUBLIC_SUPABASE_URL": "${EXPO_PUBLIC_SUPABASE_URL}", "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "${EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY}" }
+    }
+  }
+}

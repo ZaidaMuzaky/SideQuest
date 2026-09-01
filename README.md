@@ -66,6 +66,8 @@ npm run supabase:status
 
 Copy `.env.example` to an ignored `.env.local`, then replace the publishable-key placeholder with the public key printed by `npm run supabase:status`. The local API defaults to `http://127.0.0.1:54321`. Both `EXPO_PUBLIC_*` values are embedded in the client bundle and are public; never place service-role keys, database passwords, JWT signing secrets, or provider secrets there.
 
+For physical Android testing, use the deployed development project URL (not localhost) and its publishable key as environment variables, then run `eas build --profile device --platform android`. The device profile produces an installable APK and is not a store release.
+
 The client is created lazily through `src/lib/supabase`; missing configuration reports the missing variable name without logging values. Local development uses `.env.local`. Staging/preview and production provide the same two public variable names through their build environment (for example, environment-scoped EAS variables), with separate Supabase projects and no committed environment files.
 
 Useful local commands:
