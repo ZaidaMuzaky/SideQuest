@@ -9,6 +9,6 @@ test('SQ-0805 core routes expose accessible semantics and localized copy', () =>
     assert.match(source, /developmentCopy/, name);
     assert.match(source, /Button/, name);
   }
-  assert.match(files.find(([name]) => name === 'profile.tsx')[1], /accessibilityLabel=.*passwordLabel/);
-  assert.match(files.find(([name]) => name === 'active.tsx')[1], /ActiveQuestUi/);
+  assert.match(files.find(([name]) => name === 'app/profile.tsx')[1], /accessibilityLabel=.*passwordLabel/);
+  assert.match(files.find(([name]) => name === 'app/active.tsx')[1], /ActiveQuestUi/);
 });
