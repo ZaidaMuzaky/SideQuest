@@ -39,11 +39,9 @@ export function validateOnboardingPreferences(input: OnboardingPreferences): str
 export async function saveOnboarding(client: SupabaseClient<Database>, userId: string, input: OnboardingPreferences): Promise<void> {
   const invalid = validateOnboardingPreferences(input);
   if (invalid) throw new Error(invalid);
-  const { error: preferencesError } = await client.from('user_preferences').update({
-    default_time: input.time, default_budget: input.budget, default_mood: input.mood, default_distance: input.distance,
-  }).eq('user_id', userId);
-  if (preferencesError) throw preferencesError;
-  const { error: profileError } = await client.from('profiles').update({ onboarding_completed_at: new Date().toISOString() })
-    .eq('user_id', userId).is('onboarding_completed_at', null);
-  if (profileError) throw profileError;
+  const { error } = await client.rpc('save_onboarding', {
+    p_user_id: userId, p_default_time: input.time, p_default_budget: input.budget,
+    p_default_mood: input.mood, p_default_distance: input.distance,
+  });
+  if (error) throw error;
 }

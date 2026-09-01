@@ -14,7 +14,7 @@ export const developmentCopy = {
   signIn: 'Sign in',
   signOut: 'Sign out',
   onboardingTitle: 'Make SideQuest fit your day', onboardingIntro: 'Choose defaults for your first quests. You can change them later.', onboardingSaveError: 'Unable to save your choices. Please retry.',
-  ageNotice: 'SideQuest is for people aged 18 and over.', saveAndExplore: 'Save and Explore', back: 'Back', retrySave: 'Retry save',
+  ageNotice: 'SideQuest is for people aged 18 and over.', ageConfirmation: 'I confirm that I am 18 or older.', saveAndExplore: 'Save and Explore', back: 'Back', retrySave: 'Retry save',
   continue: 'Continue', time: 'Time', budget: 'Budget', mood: 'Mood', distance: 'Distance',
   profileTitle: 'Edit preferences', profileIntro: 'Update your defaults for future quests.', profileLoadError: 'Unable to load your profile.', profileSaveError: 'Unable to save your preferences. Please retry.', savePreferences: 'Save preferences', preferencesSaved: 'Preferences saved.',
   exploreTitle: 'Find a Quest', exploreIntro: 'Choose what fits your day, then we’ll find one Quest for you.', findQuest: 'Find a Quest', filtersRequired: 'Choose one option in each group before searching.', exploreLoadError: 'Unable to load your filters. Please retry.', searchReady: 'Your filters are ready to search.',

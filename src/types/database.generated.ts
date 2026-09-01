@@ -705,6 +705,7 @@ export type Database = {
       }
     }
     Functions: {
+      save_onboarding: { Args: { p_default_budget: string; p_default_distance: string; p_default_mood: string; p_default_time: string; p_user_id: string }; Returns: undefined }
       confirm_avatar_cleanup: { Args: { p_storage_path: string }; Returns: undefined }
       list_avatar_cleanup: { Args: Record<PropertyKey, never>; Returns: { storage_path: string }[] }
       replace_avatar: { Args: { p_expected_path?: string; p_new_path?: string }; Returns: Json }
