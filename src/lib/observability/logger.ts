@@ -1,5 +1,7 @@
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 export type SafeLogContext = Record<string, unknown>;
+export const ALLOWED_EVENTS = ['app_opened','onboarding_completed','quest_search_started','quest_generated','quest_no_match','quest_rerolled','quest_accepted','quest_abandoned','proof_upload_started','proof_uploaded','quest_completed','profile_viewed','history_viewed','permission_result','operation_failed'] as const;
+export type AllowedEvent = typeof ALLOWED_EVENTS[number];
 
 const SENSITIVE_KEY = /(token|password|secret|credential|authorization|cookie|signed.?url|proof|coordinate|latitude|longitude|access.?key|refresh.?key)/i;
 
@@ -35,7 +37,7 @@ export function createObservability(enabled = __DEV__): Observability {
       emit('error', 'Unhandled application error', { ...context, correlationId, error: error instanceof Error ? error.name : 'UnknownError' });
       return correlationId;
     },
-    track: () => undefined,
+    track: (event, context) => { if ((ALLOWED_EVENTS as readonly string[]).includes(event)) emit('info', `event:${event}`, context); },
   };
 }
 
