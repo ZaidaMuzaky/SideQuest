@@ -69,6 +69,11 @@ export function Button({
               : background,
           borderColor:
             variant === 'secondary' ? colors.border : 'transparent',
+          shadowColor: variant === 'primary' || variant === 'danger' ? colors.primary : 'transparent',
+          shadowOffset: { width: 0, height: 3 },
+          shadowOpacity: variant === 'primary' || variant === 'danger' ? 0.18 : 0,
+          shadowRadius: 7,
+          elevation: variant === 'primary' || variant === 'danger' ? 2 : 0,
         },
         typeof style === 'function' ? style(state) : style,
       ]}
@@ -101,7 +106,7 @@ export function Button({
 const styles = StyleSheet.create({
   base: {
     alignItems: 'center',
-    borderRadius: radius.medium,
+    borderRadius: radius.large,
     borderWidth: 1,
     justifyContent: 'center',
     minHeight: 48,
