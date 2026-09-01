@@ -44,7 +44,7 @@ Input: Active Instance ID and client-generated UUID idempotency key. Output: com
 - **Weather:** post-MVP.
 - **Push notifications:** P2; no notification vendor required.
 - **AI provider:** explicitly excluded.
-- **Analytics/crash vendor:** decision OQ-004; a privacy-conscious vendor or self-hosted/product database events may be chosen before instrumentation.
+- **Analytics/crash vendor:** no third-party vendor is integrated for MVP; existing internal observability remains the boundary. Vendor selection is deferred to external release preparation under OQ-004.
 
 ## Cross-cutting rules
 

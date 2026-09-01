@@ -39,6 +39,6 @@ Track generation rate, no-match reasons, accept/generated, complete/accepted, me
 - Create a typed event schema and automated property allowlist.
 - Document owner, definition, source, and version for each event.
 - Development/staging data is separated from production.
-- Analytics vendor and consent approach are OQ-004 and must be settled before production instrumentation.
+- MVP does not integrate a third-party analytics or crash vendor and sends no additional telemetry externally. Vendor selection, consent, processor review, and production instrumentation are deferred to post-MVP external release preparation.
 - Apply retention limits, deletion/anonymization support, role-based access, and store/privacy disclosures.
 - Revisit initial success targets only after a documented baseline; do not move targets to manufacture success.

@@ -37,8 +37,8 @@ All requested documents `01`–`23`, root `AGENTS.md`, and root `README.md` are 
 
 There are **no blockers to beginning Epic 0 foundation work**. Three decisions block later milestones, not initial implementation:
 
-- OQ-003 launch city/location source blocks `SQ-0904` launch catalog review and external release, not development seed data.
-- OQ-004 analytics/crash/consent blocks production instrumentation.
+- OQ-003 is resolved for MVP: deterministic geography-neutral catalog remains authoritative; production geography/source and launch validation are deferred external-release work.
+- OQ-004 is resolved for MVP: internal observability only; third-party analytics/crash vendor and consent work are deferred external-release work.
 - OQ-005 legal/retention review blocks external beta.
 
 Email verification/recovery (OQ-001) must also be finalized before external beta. Implementation agents must not silently decide these.

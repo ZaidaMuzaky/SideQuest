@@ -12,21 +12,23 @@ None of the unresolved questions below blocks Epic 0. Each blocks only the named
 - **Recommendation:** require verification before external beta and include password recovery; permit bypass only in non-production internal development.
 - **Impact:** mandatory adds friction but reduces abuse; deferred improves activation but complicates trust; magic link changes the specified auth UX.
 
+## Resolved for MVP; deferred external-release decisions
+
 ### OQ-003 — Launch geography and location-data source/licensing
 
-- **Status:** BLOCKER before `SQ-0904` launch catalog review/external release; not Epic 0, matching development, or deterministic test fixtures.
+- **Status:** RESOLVED FOR MVP (2026-09-01). Production launch geography/source remains an external release-readiness decision and does not block MVP software completion.
 - **Why:** final place coverage, accuracy, provenance, licensing, and launch QA depend on it.
 - **Options:** one manually curated city/metro using approved open/licensed data; multiple cities with thinner supply; paid places API.
-- **Recommendation:** one initial city/metro with manually reviewed public places and documented source/license; no paid API initially.
+- **MVP decision:** keep the engine geography-agnostic and use only deterministic SideQuest-controlled development catalog/fixtures. Do not hardcode a city or add a provider. Production geography, provenance, licensing, and launch validation remain deferred to external launch preparation.
 - **Impact:** one city improves quality but limits reach; multi-city raises no-match/safety risk; paid API adds cost/privacy/vendor dependency.
 - **Development rule:** launch geography remains TBD; engine is geography-agnostic; `SQ-0006` creates deterministic development data and must not hardcode a city.
 
 ### OQ-004 — Analytics, crash reporting, and consent
 
-- **Status:** BLOCKER before production instrumentation/public beta; not Epic 0.
+- **Status:** RESOLVED FOR MVP (2026-09-01). Third-party vendor selection and consent remain deferred to post-MVP external release preparation.
 - **Why:** vendor SDKs affect consent, privacy disclosures, residency, retention, and observability.
 - **Options:** privacy-oriented managed tools; Supabase/server funnel events plus minimal crash tool; no product analytics for private alpha.
-- **Recommendation:** use server funnel events and minimal crash reporting for private alpha, then complete processor/consent review before public beta.
+- **MVP decision:** do not integrate third-party analytics or crash reporting and do not transmit additional telemetry externally. Continue the existing internal observability/error-handling foundation. No vendor consent UI is required for MVP.
 - **Impact:** managed tools accelerate analysis but add processors/cost; internal events need analysis work; none limits product learning.
 
 ### OQ-005 — Final legal/privacy retention review

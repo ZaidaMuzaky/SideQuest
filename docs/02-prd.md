@@ -87,7 +87,7 @@ This keeps the Active Quest reachable without adding a dedicated tab.
 
 ## Dependencies
 
-Supabase project and policies; Expo build credentials; Apple/Google developer accounts; privacy policy and terms; approved Quest catalog; geocoding/place data strategy (OQ-003); analytics selection (OQ-004).
+Supabase project and policies; Expo build credentials; Apple/Google developer accounts; privacy policy and terms; deterministic geography-neutral MVP catalog. Production launch geography/data licensing (OQ-003) and third-party analytics selection (OQ-004) are external release-readiness decisions.
 
 ## Risks and mitigations
 

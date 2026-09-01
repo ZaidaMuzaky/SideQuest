@@ -67,7 +67,7 @@ Request foreground location at search time, use a bounded freshness/accuracy pol
 
 ## Error handling and logging
 
-Define typed domain errors (`NO_MATCH`, `ACTIVE_EXISTS`, `CANDIDATE_EXPIRED`, `PROOF_REQUIRED`, `RATE_LIMITED`, `SESSION_EXPIRED`, `NETWORK`). Map them to actionable copy. Structured logs include environment, app version, operation, correlation ID, and safe identifiers; exclude secrets, raw coordinates, notes, and image paths where unnecessary. Crash reporting selection is OQ-004.
+Define typed domain errors (`NO_MATCH`, `ACTIVE_EXISTS`, `CANDIDATE_EXPIRED`, `PROOF_REQUIRED`, `RATE_LIMITED`, `SESSION_EXPIRED`, `NETWORK`). Map them to actionable copy. Structured logs include environment, app version, operation, correlation ID, and safe identifiers; exclude secrets, raw coordinates, notes, and image paths where unnecessary. Third-party crash reporting is deferred post-MVP under OQ-004.
 
 ## Environment configuration
 

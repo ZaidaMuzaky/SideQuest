@@ -87,7 +87,7 @@ Each task is sized for an independent coding-agent change (roughly a focused PR)
 | SQ-0801 | Query cache/offline behavior | Safe persistence, foreground/reconnect refetch. Dep: feature epics. | P0 | AC-REL-001; EC-008–010. |
 | SQ-0802 | Rate limits/idempotency audit | Auth/match/reroll/proof/complete controls. Dep: RPCs. | P0 | 09/14 abuse tests. |
 | SQ-0803 | Error-state audit | Typed copy and retry for every screen. Dep: feature epics. | P0 | 07 and EC matrix covered. |
-| SQ-0804 | Analytics instrumentation | Typed allowlisted events and consent approach. Dep: OQ-004, features. | P0 | FR-AN-001 schema tests. |
+| SQ-0804 | Analytics instrumentation | Internal typed allowlisted diagnostics only; third-party production vendor deferred by OQ-004. Dep: features. | P0 | FR-AN-001 MVP-safe schema tests; external vendor work deferred. |
 | SQ-0805 | Accessibility audit/fixes | VoiceOver/TalkBack, text, contrast, motion. Dep: feature epics. | P0 | AC-ACC-001. |
 | SQ-0806 | Quest report flow | unavailable/unsafe reporting. Dep: 0402. | P1 | AC-REPORT-001. |
 
@@ -98,7 +98,7 @@ Each task is sized for an independent coding-agent change (roughly a focused PR)
 | SQ-0901 | CI quality gates | lint/type/unit/db/integration build pipelines. Dep: 0001–5. | P0 | 17 gates enforced. |
 | SQ-0902 | Core E2E suite | iOS/Android core and recovery flows. Dep: all P0 features. | P0 | All P0 ACs traced. |
 | SQ-0903 | Security/privacy review | RLS/storage/secrets/deletion/store disclosures. Dep: all P0. | P0 | 14 checklist signed off. |
-| SQ-0904 | Launch catalog review | Build/review final catalog for the OQ-003-approved city/data source; validate local accuracy, safety, availability, and supply. Dep: OQ-003 decision, matching complete; not merely SQ-0006. | P0 | ≥95% of eligible launch-catalog validation searches match; provenance/license recorded. |
+| SQ-0904 | Launch catalog review | Release-readiness review for a future OQ-003 production geography/source; MVP remains on deterministic geography-neutral catalog. | P0 | Deferred external-launch gate; no fabricated production data. |
 | SQ-0905 | Beta/device validation | Matrix, performance, crash-free smoke, accessibility. Dep: 0901–4. | P0 | Release gate evidence recorded. |
 | SQ-0906 | Release runbook | Migration, rollback/disable switch, support/incident contacts. Dep: 0903–5. | P0 | Dry run completed in staging. |
 
