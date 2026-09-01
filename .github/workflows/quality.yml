@@ -1,0 +1,26 @@
+name: SideQuest quality
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test -- --runInBand
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run config:check
+      - run: npm run supabase:schema:check
+      - run: npm run supabase:authorization:check
+      - run: npm run supabase:seed:check
+      - run: npm run supabase:remote:guard:test
+      - run: npm run supabase:remote:tap:test
+      - run: node --test scripts/delete-account-function.test.mjs scripts/sq0802-idempotency-audit.test.mjs scripts/sq0805-accessibility-audit.test.mjs
+      - run: git diff --check
